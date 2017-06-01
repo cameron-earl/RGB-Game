@@ -12,6 +12,7 @@ var lossCount = 0;
 var stats = document.querySelector("#stats");
 var description = document.querySelector("#description");
 var info = document.querySelector("#info");
+var standardBackgroundColor = "232323";
 
 function randInt(min, max) {
   min = Math.ceil(min);
@@ -56,7 +57,7 @@ function eliminate(el) {
 function win(el) {
 	gameOver = true;
 	el.classList.add("winner");
-	document.querySelector("#header").style.backgroundColor = winningColor;
+	document.querySelector("body").style.backgroundColor = winningColor;
 	winCount++;
 	if (squares.length > 1) {
 		var index = squares.indexOf(el);
@@ -126,6 +127,7 @@ function newGame() {
 	winningColor = colors[randInt(0,squares.length)];
 	document.querySelector("#winningColor").textContent = winningColor.toUpperCase();
 	arrangeSquares();
+	document.querySelector("body").style.backgroundColor = standardBackgroundColor;
 }
 
 function buildSquaresHTML() {
