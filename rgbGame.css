@@ -6,7 +6,7 @@ body {
 }
 
 .square {
-	height: 70%;
+	height: 75%;
 	float: left;
 	margin: 1%;
 }
@@ -40,6 +40,12 @@ h1 {
 	background-color: white;
 	color: #232323;
 	font-family: 'Khula', sans-serif;
+	padding-top: 3px;
+}
+
+#info span {
+	padding-top: 3px;
+	color: #48e;
 }
 
 .hidden {
@@ -47,14 +53,14 @@ h1 {
 }
 
 .redVal {
-	color: #ffcccc;
+	color: #fcc;
 }
 
 .greenVal {
-	color: #ccffcc;
+	color: #cfc;
 }
 .blueVal {
-	color: #ccccff;
+	color: #ccf;
 }
 
 .winner {
@@ -62,5 +68,29 @@ h1 {
 }
 
 .loser {
-	box-shadow: 0px 0px 20px #dd0000;
+	box-shadow: 0px 0px 20px #d00;
 }
+
+.tab {
+	margin-left: 2em;
+}
+
+#colorCountInput {
+	width: 20;
+}
+
+#newGameBtn:hover {
+	background-color: #48e;
+	color: white;
+}
+
+#newGameBtn {
+	font-weight: bold;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
