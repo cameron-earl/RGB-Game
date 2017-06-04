@@ -265,7 +265,6 @@ function buildSquares() {
 }
 
 function onLeftClick() {
-	console.log('onLeftClick square');
 	var el = window.event.currentTarget;
 	if (!gameOver) {
 		if (el.style.backgroundColor === winningColor) {
@@ -279,7 +278,6 @@ function onLeftClick() {
 }
 
 function onRightClick() {
-	console.log('onRightClick square');
 	var ev = window.event;
 	ev.preventDefault();
 	var el = ev.currentTarget;
@@ -295,19 +293,16 @@ function onRightClick() {
 function initialize() {
 	INFO.addEventListener("click",toggleStatsView);
 	NEW_GAME_BTN.addEventListener("click", function(ev) {
-		console.log('onLeftClick newGameBtn');
 		newGame();
 		ev.stopPropagation();
 	});
 	HEADER.addEventListener("contextmenu", function(ev) {
-		console.log('onRightClick HEADER');
 		ev.stopPropagation();
 	});
 	COUNT_INPUT.addEventListener("click", function(ev) {
 		ev.stopPropagation();
 	});
 	BODY.addEventListener("contextmenu", function(ev) {
-		console.log('onRightClick BODY');
 		ev.preventDefault();
 	});
 	COUNT_INPUT.value = +optionCount;
