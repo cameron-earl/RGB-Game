@@ -9,6 +9,7 @@ body {
 	height: 75%;
 	float: left;
 	margin: 1%;
+	line-height: 70%;
 }
 
 .squareText {
@@ -21,7 +22,8 @@ body {
 }
 
 #color-container {
-	max-width: 600px;
+	width: 600px;
+	height: 600px;
 	margin: 0 auto;
 }
 
@@ -76,7 +78,7 @@ h1 {
 }
 
 #colorCountInput {
-	width: 20;
+	width: 30;
 }
 
 #newGameBtn:hover {
