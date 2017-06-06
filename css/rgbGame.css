@@ -21,6 +21,10 @@ body {
     z-index: 1;
 }
 
+.square.noTransform:hover {
+	transform: none;
+}
+
 .squareText {
 	background-color: rgba(0,0,0,0.5);
 	text-shadow: 1px 1px #000;

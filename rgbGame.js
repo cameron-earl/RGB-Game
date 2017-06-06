@@ -222,6 +222,7 @@ function lose(el) {
 			squares[i].querySelector(".squareRGB").classList.remove("hidden");
 			squares[i].querySelector(".squareText").classList.remove("hidden");
 		}
+		squares[i].classList.add("noTransform");
 	}
 	gameOver = true;
 }
