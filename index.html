@@ -2,8 +2,8 @@
 <head>
 	<title>RGB Game</title>
 	<link rel="stylesheet" type="text/css" href="rgbGame.css">
-	<link href="https://fonts.googleapis.com/css?family=Rajdhani|Khula:400,700" rel="stylesheet">
-	<link rel="shortcut icon" type="image/x-icon" href="rgb.ico" />
+	<link href="https://fonts.googleapis.com/css?family=Khand:300|Khula:400,700" rel="stylesheet">
+	<link rel="shortcut icon" type="image/x-icon" href="rgb2.ico" />
 </head>
 <body>
 	<div id="header">
@@ -17,7 +17,8 @@
 				<span class="tab"></span>
 				Losses: <span id="lossCount"></span>
 		 		<span class="tab"></span>
-				# of Colors:<input id="colorCountInput">
+				Level:<input id="levelInput" type="number" min="2" max="2" dir="rtl"><sup>2</sup>
+				</select>
 				<span class="tab"></span>
 				<span id="newGameBtn" class="clickable">New Game</span>
 			</span>
@@ -25,6 +26,7 @@
 	</div>
 	<div id="color-container">
 	</div>
+	<div id="flash"></div>
 <script type="text/javascript" src="rgbGame.js"></script>
 </body>
 </html>

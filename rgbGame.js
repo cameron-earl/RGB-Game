@@ -11,17 +11,22 @@ const COLOR_CONTAINER = document.querySelector("#color-container");
 const INFO = document.querySelector("#info");
 const STATS = document.querySelector("#stats");
 const MESSAGE = document.querySelector("#message");
-const COUNT_INPUT = document.querySelector("#colorCountInput");
+const LEVEL_INPUT = document.querySelector("#levelInput");
 const WIN_COUNT = document.querySelector("#winCount");
 const LOSS_COUNT = document.querySelector("#lossCount");
 const WINNING_COLOR_DISPLAY = document.querySelector("#winningColor");
 const NEW_GAME_BTN = document.querySelector("#newGameBtn");
+const FLASH = document.querySelector("#flash");
 
-
-var optionCount = 6;
+var currentLevel = 2;
+var highestLevel = 2;
+var newLevelUnlocked = false;
+var optionCount = 4;
+var remaining = optionCount;
 var rowCount = 2;
 var winningColor = "RGB";
 var winMsg = "You win!";
+var newLevelMsg = "You won and unlocked the next level!";
 var gameOver = false;
 var colors = [];
 var squares = [];
@@ -32,7 +37,20 @@ var lossCount = 0;
 var MESSAGES = [
 	"Click the right color, or eliminate squares by right clicking.",
 	"Hints sometimes appear up here.",
-	"This code is on github! https://github.com/randomraccoon/RGB-Game"
+	"Beating the hardest level will unlock a harder one.",
+	"See the code at github.com/randomraccoon/RGB-Game",
+	"You won't be able to unlock higher levels just by guessing.",
+	"You can click here to reveal stats and options.",
+	"How high of a level can you beat?",
+	"Unsure? It helps to eliminate the ones you know are wrong.",
+	"Want to learn web development? udemy.com/the-web-developer-bootcamp",
+	"Have suggestions? Email me at developer.cameron@gmail.com.",
+	"Red and green in equal amounts make yellow.",
+	"Green and blue in equal amounts make cyan.",
+	"Red and blue in equal amounts make magenta.",
+	"If red, green and blue are equal it makes a shade of gray.",
+	"If RGB doesn't make much sense, you might prefer HSL.",
+	"To start a new game, you can also click a square."
 ];
 
 // ************ STATIC FUNCTIONS ************
@@ -58,6 +76,10 @@ function getRandomColor() {
 	var g = randInt(0,255);
 	var b = randInt(0,255);
 	return "rgb(" + r + ", " + g + ", " + b + ")";
+}
+
+function countFromLevel(level) {
+	return level*level;
 }
 
 // ************ FUNCTIONS USING GLOBAL VARS ************
@@ -100,40 +122,33 @@ function updateStats() {
 }
 
 function updateMessage() {
-	if (squares.length === optionCount) {
+	if (squares.length === optionCount && winCount === 0) {
 		MESSAGE.textContent = MESSAGES[0];
 	} else {
-		MESSAGE.textContent = squares.length + " remaining. " + getRandomMessage();
+		MESSAGE.textContent = squares.length + " left. " + getRandomMessage();
 	}
-	 
 }
 
 function hint() {
 	var rgbArr = rgbComponents(winningColor);
-	console.log("rgbArr: ", rgbArr);
 	var rgbArr2 = rgbArr.slice();
-	console.log("rgbArr2: ", rgbArr2);
 	var maxIndex = rgbArr.indexOf(Math.max(rgbArr2[0], rgbArr2[1], rgbArr2[2]));
-	rgbArr2.splice(maxIndex, 1);
 	var midIndex = rgbArr.indexOf(Math.max(rgbArr2[0], rgbArr2[1]));
 	rgbArr2.splice(midIndex, 1);
-	console.log(rgbArr2);
 	var minIndex = rgbArr.indexOf(rgbArr2[0]);
 	var boldRating = rgbArr[maxIndex] - rgbArr[minIndex];
 	var maxHint = "This color sure has a lot of " + BASIC_COLORS[maxIndex] + ".";
 	var minHint = "I'm not sure what color this is, but it's not " + BASIC_COLORS[minIndex] + ".";
 	var boldHint =  
-		(boldRating >= 256 * .8) ? "This color is pretty bold." :
-		(boldRating <= 256 * .2) ? "This color is pretty bland." : "";
+		(boldRating >= 256 * 0.8) ? "This color is pretty bold." :
+		(boldRating <= 256 * 0.2) ? "This color is pretty bland." : "";
 	var hints = [maxHint, minHint, boldHint];
-	console.log("maxIndex: " + maxIndex);
-	console.log("midIndex: " + midIndex);
-	console.log("minIndex: " + minIndex);
 	return hints[randInt(0,hints.length - 1)];
 }
 
 function eliminate(el) {
-	el.classList.add("hidden");
+	el.classList.add("eliminated");
+	remaining--;
 	var index = squares.indexOf(el);
 	squares.splice(index, 1);
 	arrangeSquares();
@@ -148,6 +163,10 @@ function eliminate(el) {
 function win(el) {
 	gameOver = true;
 	winCount++;
+	var isTrying = lossCount * currentLevel / optionCount <= winCount;
+	if (isTrying && currentLevel === highestLevel) {
+		addNewLevel();
+	}
 	el.classList.add("winner");
 	HEADER.style.backgroundColor = winningColor;
 	if (squares.length > 1) {
@@ -160,39 +179,58 @@ function win(el) {
 		}
 	}
 	var textField = squares[0].querySelector(".winText");
-	textField.textContent = winMsg;
+	textField.textContent = newLevelUnlocked ? newLevelMsg : winMsg;
 	textField.classList.remove("hidden");
+	squares[0].querySelector(".squareText").classList.remove("hidden");
 	displayStats();
+	flash();
 }
 
 function lose(el) {
 	lossCount++;
 	displayStats();
 	el.classList.add("loser");
+	flash("red");
 	for (var i = 0; i < squares.length; i++) {
 		var rgbStr = squares[i].style.backgroundColor;
 		if (rgbStr === winningColor) {
 			squares[i].classList.add("winner");
 		}
-		if (rowCount <= 11) { // todo: change to pixel width of square[0]
+		if (rowCount <= 11) {
 			var rgbArr = rgbComponents(rgbStr);
 			squares[i].querySelector(".redVal").textContent = rgbArr[0];
 			squares[i].querySelector(".greenVal").textContent = rgbArr[1];
 			squares[i].querySelector(".blueVal").textContent = rgbArr[2];
 			squares[i].querySelector(".squareRGB").classList.remove("hidden");
+			squares[i].querySelector(".squareText").classList.remove("hidden");
 		}
-		
 	}
 	gameOver = true;
 }
 
+function addNewLevel() {
+	highestLevel++;
+	LEVEL_INPUT.max = highestLevel;
+	LEVEL_INPUT.value = currentLevel;
+	newLevelUnlocked = true;
+}
+
 function arrangeSquares() {
+	var i;
+	if (remaining != optionCount && Math.sqrt(remaining)%1 === 0) {
+		var eliminated = COLOR_CONTAINER.querySelectorAll(".eliminated");
+		for (i = 0; i < eliminated.length; i++) {
+			eliminated[i].classList.remove("eliminated");
+			eliminated[i].classList.add("hidden");
+		}
+	}
+
 	rowCount = Math.ceil(Math.sqrt(squares.length));
 	var squaresPerRow = rowCount;
 	var availWidth = 100 - squaresPerRow * 2;
 	var width = availWidth / squaresPerRow;
 	var height = width;
-	for(var i = 0; i < squares.length; i++) {
+	for(i = 0; i < squares.length; i++) {
 		squares[i].style.width = width + "%";
 		squares[i].style.height = height + "%";
 	}
@@ -200,14 +238,17 @@ function arrangeSquares() {
 
 function newGame() {
 	gameOver = false;
-	var newCount = +COUNT_INPUT.value;
-	if (!isNaN(newCount) && optionCount !== newCount) {
-		buildSquares();
+	if (newLevelUnlocked) {
+		LEVEL_INPUT.value = highestLevel;
+		currentLevel = highestLevel;
+		newLevelUnlocked = false;
 	}
+	buildSquares();
 	var textFieldArray = document.querySelectorAll(".squareText");
 	for (var i = 0; i < textFieldArray.length; i++) {
 		textFieldArray[i].querySelector(".winText").classList.add("hidden");
 		textFieldArray[i].querySelector(".squareRGB").classList.add("hidden");
+		textFieldArray[i].classList.add("hidden");
 	}
 	buildSquaresArr();
 	winningIndex = randInt(0,optionCount);
@@ -221,7 +262,7 @@ function newGame() {
 		squares[i].style.backgroundColor = colors[i];
 		squares[i].classList.remove("hidden","winner","loser");
 	}
-	WINNING_COLOR_DISPLAY.textContent = winningColor.toUpperCase();
+	WINNING_COLOR_DISPLAY.textContent = winningColor;
 	arrangeSquares();
 	HEADER.style.backgroundColor = STANDARD_BACKGROUND_COLOR;
 	displayMessage();
@@ -254,8 +295,9 @@ function buildSquaresArr() {
 }
 
 function buildSquares() {
-	optionCount = +COUNT_INPUT.value;
 	colors = [];
+	optionCount = countFromLevel(currentLevel);
+	remaining = optionCount;
 	buildSquaresHTML();
 	buildSquaresArr();
 	for (var i = 0; i < squares.length; i++) {
@@ -266,6 +308,9 @@ function buildSquares() {
 
 function onLeftClick() {
 	var el = window.event.currentTarget;
+	if (el.classList.contains("eliminated")) {
+		return;
+	}
 	if (!gameOver) {
 		if (el.style.backgroundColor === winningColor) {
 			win(el);
@@ -281,6 +326,9 @@ function onRightClick() {
 	var ev = window.event;
 	ev.preventDefault();
 	var el = ev.currentTarget;
+	if (el.classList.contains("eliminated")) {
+		return;
+	}
 	if (!gameOver) {
 		if (el.style.backgroundColor === winningColor) {
 			lose(el);
@@ -288,6 +336,20 @@ function onRightClick() {
 			eliminate(el);
 		}
 	}
+}
+
+function flash(color, el) {
+	if (!color) {
+		color = "White";
+	}
+	if (!el) {
+		el = FLASH;
+	}
+	el.style.backgroundColor = color;
+	el.classList.add("elementToFadeInAndOut");
+	setTimeout(function() {
+		el.classList.remove("elementToFadeInAndOut");
+	}, 500);
 }
 
 function initialize() {
@@ -299,22 +361,22 @@ function initialize() {
 	HEADER.addEventListener("contextmenu", function(ev) {
 		ev.stopPropagation();
 	});
-	COUNT_INPUT.addEventListener("click", function(ev) {
+	LEVEL_INPUT.addEventListener("change", function() {
+		currentLevel = +this.value;
+	});
+	LEVEL_INPUT.addEventListener("click", function(ev) {
 		ev.stopPropagation();
 	});
+	LEVEL_INPUT.value = currentLevel;
 	BODY.addEventListener("contextmenu", function(ev) {
 		ev.preventDefault();
 	});
-	COUNT_INPUT.value = +optionCount;
-	buildSquares();
-	newGame();
 }
 
 // ************ CODE ************
 
 initialize();
-
-
+newGame();
 
 
 

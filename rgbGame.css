@@ -1,15 +1,23 @@
 body {
 	background-color: #232323;
 	color: white;
-	font-family: 'Rajdhani', sans-serif;
 	margin: 0px;
+	font-family: 'Khula', sans-serif;
 }
 
 .square {
 	height: 75%;
 	float: left;
 	margin: 1%;
-	line-height: 70%;
+	border-radius: 15%;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0px 0px 20px #000;
+}
+
+.square:hover {
+    transform: scale(1.05);
+    position: relative;
+    z-index: 1;
 }
 
 .squareText {
@@ -19,11 +27,14 @@ body {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
+    line-height: 0.9em;
+    padding-top: 3px;
+    user-select: none;
 }
 
 #color-container {
-	width: 600px;
-	height: 600px;
+	width: 550px;
+	height: 550px;
 	margin: 0 auto;
 }
 
@@ -32,22 +43,33 @@ body {
 }
 
 h1 {
+	font-family: 'Khand', sans-serif;
 	filter: drop-shadow(1px 1px 4px black);
-	font-size: 3em;
-	padding-top: 10px;
-	margin-bottom: 10px;
+	font-size: 4em;
+	font-weight: lighter;
+	margin: 0px;
+	text-transform: uppercase;
+	line-height: 1.3em;
+	background-color: SteelBlue;
 }
 
 #info {
 	background-color: white;
-	color: #232323;
-	font-family: 'Khula', sans-serif;
+	color: SteelBlue;
 	padding-top: 3px;
+	position: relative;
+	z-index: 1;
 }
 
-#info span {
-	padding-top: 3px;
-	color: #48e;
+#levelInput {
+	color: SteelBlue;
+	background-color: white;
+	border: none;
+	font-size: 1em;
+}
+
+#levelInput:focus {
+	    outline: none;
 }
 
 .hidden {
@@ -65,34 +87,74 @@ h1 {
 	color: #ccf;
 }
 
+div.square.eliminated {
+	background-color: 232323 !important; 
+	box-shadow: none;
+}
+
+div.square.eliminated:hover {
+	transform: none;
+}
+
 .winner {
-	box-shadow: 0px 0px 20px #9ff;
+	box-shadow: 0px 0px 20px #9f9;
+}
+
+.winner:hover {
+	transform: none;
 }
 
 .loser {
 	box-shadow: 0px 0px 20px #d00;
 }
 
-.tab {
-	margin-left: 2em;
+.loser:hover {
+	transform: none;
 }
 
-#colorCountInput {
-	width: 30;
+.tab {
+	display: inline-block;
+	width: 5%;
 }
 
 #newGameBtn:hover {
-	background-color: #48e;
-	color: white;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
 }
 
 #newGameBtn {
+	background-color: SteelBlue;
+	color: white;
 	font-weight: bold;
 	padding-left: 5px;
 	padding-right: 5px;
+	padding-top: 3px;
+	height: 100%;
 }
 
 .clickable {
 	cursor: pointer;
 }
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {  
+   opacity: 1;
+}
+
+sup {
+	line-height: 0;
+}
+
+#flash.elementToFadeInAndOut {
+    z-index: 10;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    animation: fadeinout 0.4s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeinout {
+  50% { opacity: 0.5; }
+}
