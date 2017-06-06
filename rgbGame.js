@@ -8,7 +8,7 @@ const BASIC_COLORS = ["red","green","blue","yellow","cyan","magenta"];
 const BODY = document.querySelector("body");
 const HEADER = document.querySelector("#header");
 const COLOR_CONTAINER = document.querySelector("#color-container");
-const INFO = document.querySelector("#info");
+const WHITE_BAR = document.querySelector("#white-bar");
 const STATS = document.querySelector("#stats");
 const MESSAGE = document.querySelector("#message");
 const LEVEL_INPUT = document.querySelector("#levelInput");
@@ -16,7 +16,11 @@ const WIN_COUNT = document.querySelector("#winCount");
 const LOSS_COUNT = document.querySelector("#lossCount");
 const WINNING_COLOR_DISPLAY = document.querySelector("#winningColor");
 const NEW_GAME_BTN = document.querySelector("#newGameBtn");
+const INFO_BTN = document.querySelector("#learnMore");
+const INFO = document.querySelector("#info-screen");
 const FLASH = document.querySelector("#flash");
+const WIN_ICON = document.querySelector("#winUp");
+const LOSE_ICON = document.querySelector("#lossUp");
 
 var currentLevel = 2;
 var highestLevel = 2;
@@ -33,24 +37,30 @@ var squares = [];
 var winningIndex = 0;
 var winCount = 0;
 var lossCount = 0;
+var mouseDown = false;
+var shiftDown = false;
 
 var MESSAGES = [
-	"Click the right color, or eliminate squares by right clicking.",
+	"Click the color described by the RGB code above.",
 	"Hints sometimes appear up here.",
 	"Beating the hardest level will unlock a harder one.",
-	"See the code at github.com/randomraccoon/RGB-Game",
+	"See the code at <a href='https://www.github.com/randomraccoon/RGB-Game'>github.com/randomraccoon/RGB-Game</a>",
 	"You won't be able to unlock higher levels just by guessing.",
 	"You can click here to reveal stats and options.",
 	"How high of a level can you beat?",
 	"Unsure? It helps to eliminate the ones you know are wrong.",
-	"Want to learn web development? udemy.com/the-web-developer-bootcamp",
-	"Have suggestions? Email me at developer.cameron@gmail.com.",
 	"Red and green in equal amounts make yellow.",
 	"Green and blue in equal amounts make cyan.",
 	"Red and blue in equal amounts make magenta.",
 	"If red, green and blue are equal it makes a shade of gray.",
+	"If all the numbers are high, it will be very light.",
 	"If RGB doesn't make much sense, you might prefer HSL.",
-	"To start a new game, you can also click a square."
+	"To start a new game, you can also click a square.",
+	"You always can switch to an easier level if it gets too difficult.",
+	"To turn off auto-advance, just change off the hardest level.",
+	"You can eliminate squares with a right-click or a shift+left-click.",
+	"Bold colors have both a low value and a high value in the RGB code.",
+	"You can shift+click and drag to easily eliminate many squares."
 ];
 
 // ************ STATIC FUNCTIONS ************
@@ -125,7 +135,13 @@ function updateMessage() {
 	if (squares.length === optionCount && winCount === 0) {
 		MESSAGE.textContent = MESSAGES[0];
 	} else {
-		MESSAGE.textContent = squares.length + " left. " + getRandomMessage();
+		MESSAGE.innerHTML = squares.length + " left. " + getRandomMessage();
+	}
+	var anchor = MESSAGE.querySelector("a");
+	if (anchor) {
+		anchor.addEventListener("click",function(ev) {
+			ev.stopPropagation();
+		});
 	}
 }
 
@@ -168,6 +184,7 @@ function win(el) {
 		addNewLevel();
 	}
 	el.classList.add("winner");
+	WIN_ICON.classList.remove("hidden");
 	HEADER.style.backgroundColor = winningColor;
 	if (squares.length > 1) {
 		var index = squares.indexOf(el);
@@ -191,6 +208,7 @@ function lose(el) {
 	displayStats();
 	el.classList.add("loser");
 	flash("red");
+	LOSE_ICON.classList.remove("hidden");
 	for (var i = 0; i < squares.length; i++) {
 		var rgbStr = squares[i].style.backgroundColor;
 		if (rgbStr === winningColor) {
@@ -217,32 +235,38 @@ function addNewLevel() {
 
 function arrangeSquares() {
 	var i;
-	if (remaining != optionCount && Math.sqrt(remaining)%1 === 0) {
-		var eliminated = COLOR_CONTAINER.querySelectorAll(".eliminated");
-		for (i = 0; i < eliminated.length; i++) {
-			eliminated[i].classList.remove("eliminated");
-			eliminated[i].classList.add("hidden");
+	if (!shiftDown || remaining === 1) {
+		if (remaining <= Math.pow(rowCount - 1, 2)) {
+			var eliminated = COLOR_CONTAINER.querySelectorAll(".eliminated");
+			for (i = 0; i < eliminated.length; i++) {
+				eliminated[i].classList.remove("eliminated");
+				eliminated[i].classList.add("hidden");
+			}
 		}
-	}
 
-	rowCount = Math.ceil(Math.sqrt(squares.length));
-	var squaresPerRow = rowCount;
-	var availWidth = 100 - squaresPerRow * 2;
-	var width = availWidth / squaresPerRow;
-	var height = width;
-	for(i = 0; i < squares.length; i++) {
-		squares[i].style.width = width + "%";
-		squares[i].style.height = height + "%";
+		rowCount = Math.ceil(Math.sqrt(squares.length));
+		var squaresPerRow = rowCount;
+		var availWidth = 100 - squaresPerRow * 2;
+		var width = availWidth / squaresPerRow;
+		var height = width;
+		for(i = 0; i < squares.length; i++) {
+			squares[i].style.width = width + "%";
+			squares[i].style.height = height + "%";
+		}
 	}
 }
 
 function newGame() {
 	gameOver = false;
-	if (newLevelUnlocked) {
+	if (currentLevel !== +LEVEL_INPUT.value) {
+		currentLevel = +LEVEL_INPUT.value;
+	} else if (newLevelUnlocked) {
 		LEVEL_INPUT.value = highestLevel;
 		currentLevel = highestLevel;
-		newLevelUnlocked = false;
 	}
+	newLevelUnlocked = false;
+	LOSE_ICON.classList.add("hidden");
+	WIN_ICON.classList.add("hidden");
 	buildSquares();
 	var textFieldArray = document.querySelectorAll(".squareText");
 	for (var i = 0; i < textFieldArray.length; i++) {
@@ -303,12 +327,26 @@ function buildSquares() {
 	for (var i = 0; i < squares.length; i++) {
 		squares[i].addEventListener("click", onLeftClick);
 		squares[i].addEventListener("contextmenu", onRightClick);
+		squares[i].addEventListener("mouseover", dragOnOff);
+		squares[i].addEventListener("mouseout", dragOnOff);
+	}
+}
+
+function dragOnOff() {
+	var ev = window.event;
+	if (mouseDown && ev.shiftKey) {
+		onRightClick();
 	}
 }
 
 function onLeftClick() {
-	var el = window.event.currentTarget;
+	var ev = window.event;
+	var el = ev.currentTarget;
 	if (el.classList.contains("eliminated")) {
+		return;
+	}
+	if (ev.shiftKey) {
+		onRightClick();
 		return;
 	}
 	if (!gameOver) {
@@ -352,25 +390,71 @@ function flash(color, el) {
 	}, 500);
 }
 
+function toggleInfoScreen() {
+	COLOR_CONTAINER.classList.toggle("hidden");
+	INFO.classList.toggle("hidden");
+	INFO_BTN.classList.toggle("icon-info");
+	INFO_BTN.classList.toggle("icon-squares");
+}
+
 function initialize() {
-	INFO.addEventListener("click",toggleStatsView);
-	NEW_GAME_BTN.addEventListener("click", function(ev) {
-		newGame();
-		ev.stopPropagation();
-	});
-	HEADER.addEventListener("contextmenu", function(ev) {
-		ev.stopPropagation();
-	});
-	LEVEL_INPUT.addEventListener("change", function() {
-		currentLevel = +this.value;
-	});
-	LEVEL_INPUT.addEventListener("click", function(ev) {
-		ev.stopPropagation();
-	});
-	LEVEL_INPUT.value = currentLevel;
-	BODY.addEventListener("contextmenu", function(ev) {
+	WHITE_BAR.addEventListener("click",toggleStatsView);
+
+	BODY.addEventListener("contextmenu", function (ev) {
 		ev.preventDefault();
 	});
+
+	document.addEventListener("mousedown", function () {
+		mouseDown = true;
+	});
+
+	document.addEventListener("mouseup", function () {
+		mouseDown = false;
+	});
+
+	document.addEventListener("keydown", function (ev) {
+	  	if (ev.shiftKey) {
+	  		if (!shiftDown) {
+	  			shiftDown = true;
+	  		}
+  		}
+  	});
+
+  	document.addEventListener("keyup", function (ev) {
+  		if (!ev.shiftKey && shiftDown) {
+  			shiftDown = false;
+  			arrangeSquares();
+  		}
+  	});
+
+	HEADER.addEventListener("contextmenu", function (ev) {
+		ev.stopPropagation();
+	});
+
+	NEW_GAME_BTN.addEventListener("click", function (ev) {
+		ev.stopPropagation();
+		newGame();
+	});
+
+	INFO_BTN.addEventListener("click", function (ev) {
+		ev.stopPropagation();
+		toggleInfoScreen();
+	});
+
+	LEVEL_INPUT.addEventListener("click", function (ev) {
+		ev.stopPropagation();
+	});
+
+	LEVEL_INPUT.value = currentLevel;
+
+	INFO.addEventListener("contextmenu", function (ev) {
+		ev.stopPropagation();
+	});
+
+	var anchors = INFO.querySelectorAll("a");
+	for (var i = 0; i < anchors.length; i++) {
+		anchors[i].setAttribute("target", "_blank");
+	}
 }
 
 // ************ CODE ************
