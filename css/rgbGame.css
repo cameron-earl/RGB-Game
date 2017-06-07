@@ -1,195 +1,198 @@
 body {
-	background-color: #232323;
-	color: white;
-	margin: 0px;
-	font-family: 'Khula', sans-serif;
-	user-select: none;
+  background-color: #232323;
+  color: white;
+  margin: 0;
+  font-family: 'Khula', sans-serif;
+  user-select: none;
 }
 
 .square {
-	height: 75%;
-	float: left;
-	margin: 1%;
-	border-radius: 15%;
-    transition: background-color 0.3s, transform 0.3s;
-    box-shadow: 0px 0px 20px #000;
+  height: 75%;
+  float: left;
+  margin: 1%;
+  border-radius: 15%;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 0 20px #000;
 }
 
 .square:hover {
-    transform: scale(1.05);
-    position: relative;
-    z-index: 1;
+  transform: scale(1.05);
+  position: relative;
+  z-index: 1;
 }
 
-.square.noTransform:hover {
-	transform: none;
+.noTransform:hover {
+  transform: none;
 }
 
 .squareText {
-	background-color: rgba(0,0,0,0.5);
-	text-shadow: 1px 1px #000;
-    text-align: center;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    line-height: 0.9em;
-    padding-top: 3px;
-    user-select: none;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px #000;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 0.9em;
+  padding-top: 3px;
+  user-select: none;
 }
 
 #color-container {
-	width: 550px;
-	height: 550px;
-	margin: 0 auto;
-	user-select: none;
+  width: 550px;
+  height: 550px;
+  margin: 0 auto;
+  user-select: none;
 }
 
 #header {
-	text-align: center;
+  text-align: center;
 }
 
 h1 {
-	font-family: 'Khand', sans-serif;
-	filter: drop-shadow(1px 1px 4px black);
-	font-size: 4em;
-	font-weight: lighter;
-	margin: 0px;
-	text-transform: uppercase;
-	line-height: 1.3em;
-	background-color: SteelBlue;
+  font-family: 'Khand', sans-serif;
+  filter: drop-shadow(1px 1px 4px black);
+  font-size: 4em;
+  font-weight: lighter;
+  margin: 0;
+  text-transform: uppercase;
+  line-height: 1.3em;
+  background-color: SteelBlue;
 }
 
 #white-bar {
-	background-color: white;
-	color: SteelBlue;
-	padding-top: 3px;
-	position: relative;
-	z-index: 1;
+  background-color: white;
+  color: SteelBlue;
+  padding-top: 3px;
+  position: relative;
+  z-index: 1;
 }
 
 #levelInput {
-	color: SteelBlue;
-	background-color: white;
-	border: none;
-	font-size: 1em;
+  color: SteelBlue;
+  background-color: white;
+  border: none;
+  font-size: 1em;
 }
 
 #levelInput:focus {
-	    outline: none;
+  outline: none;
 }
 
 #winUp {
-	color: ForestGreen;
+  color: ForestGreen;
 }
 
 #lossUp {
-	color: #C00;
+  color: #C00;
 }
 
 .hidden {
-	display: none;
+  display: none;
 }
 
 .redVal {
-	color: #fcc;
+  color: #fcc;
 }
 
 .greenVal {
-	color: #cfc;
+  color: #cfc;
 }
 .blueVal {
-	color: #ccf;
+  color: #ccf;
 }
 
-div.square.eliminated {
-	background-color: #232323 !important; 
-	box-shadow: none;
+.eliminated {
+  background-color: #232323 !important;
+  box-shadow: none;
 }
 
 .winner {
-	box-shadow: 0px 0px 20px #9f9;
+  box-shadow: 0 0 20px #9f9;
 }
 
-.winner:hover, .loser:hover, div.square.eliminated:hover {
-	transform: none;
+.winner:hover, .loser:hover, .eliminated:hover {
+  transform: none;
 }
 
 .loser {
-	box-shadow: 0px 0px 20px #d00;
+  box-shadow: 0 0 20px #d00;
 }
 
 .tab {
-	display: inline-block;
-	width: 2.5%;
+  display: inline-block;
+  width: 2.5%;
 }
 
 .infoBarBtn {
-	font-weight: bold;
-	padding-left: 5px;
-	padding-right: 5px;
-	padding-top: 3px;
-	height: 100%;
+  font-weight: bold;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 3px;
+  height: 100%;
 }
 
 .infoBarBtn:hover {
-	background-color: SteelBlue;
-	color: white;
+  background-color: SteelBlue;
+  color: white;
 }
 
 .clickable {
-	cursor: pointer;
+  cursor: pointer;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button {  
-   opacity: 1;
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  opacity: 1;
 }
 
 sup {
-	line-height: 0;
+  line-height: 0;
 }
 
 #info-screen {
-	background-color: rgba(250,250,250,1);
-	color: #232323;
-	width: 100%;
-	height: 100%;
-	margin: -5px auto;
-	user-select: auto;
+  background-color: white;
+  color: #232323;
+  width: 100%;
+  height: 100%;
+  margin: -5px auto;
+  user-select: all;
 }
 
 #info-screen-text {
-	width: 550px;
-	padding: 5%;
-	margin: 5px auto;
+  width: 550px;
+  padding: 5%;
+  margin: 5px auto;
 }
 
 #info-screen-text a {
-	font-weight: bold;
-	color: SteelBlue;
-	text-decoration: none;
+  font-weight: bold;
+  color: SteelBlue;
+  text-decoration: none;
 }
 
 #info-screen-text a:hover {
-	color: #D00;
+  color: #D00;
 }
 
-#info-screen-text a:active{
-	color: ForestGreen;
+#info-screen-text a:active {
+  color: ForestGreen;
 }
 
-#flash.elementToFadeInAndOut {
-    z-index: 10;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    animation: fadeinout 0.4s ease-out forwards;
-    opacity: 0;
-    pointer-events: none;
+.elementToFadeInAndOut {
+  z-index: 10;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  animation: fadeinout 0.4s ease-out forwards;
+  opacity: 0;
+  pointer-events: none;
 }
 
 @keyframes fadeinout {
-  50% { opacity: 0.5; }
+  50% {
+    opacity: 0.5;
+  }
 }

@@ -262,7 +262,9 @@ function lose(el) {
 	el.classList.add("loser");
 	flash("red");
 	LOSE_ICON.classList.remove("hidden");
-	for (var i = 0; i < squares.length; i++) {
+	var i = 0,
+		l = squares.length;
+	for (i = 0; i < l; i++) {
 		var rgbStr = squares[i].style.backgroundColor;
 		if (rgbStr === winningColor) {
 			squares[i].classList.add("winner");
@@ -294,11 +296,12 @@ function addNewLevel() {
 }
 
 function arrangeSquares() {
-	var i;
+	var i, l;
 	if (!shiftDown || remaining === 1) {
 		if (remaining <= Math.pow(rowCount - 1, 2)) {
 			var eliminated = COLOR_CONTAINER.querySelectorAll(".eliminated");
-			for (i = 0; i < eliminated.length; i++) {
+			l = eliminated.length;
+			for (i = 0; i < l; i++) {
 				eliminated[i].classList.remove("eliminated");
 				eliminated[i].classList.add("hidden");
 			}
@@ -309,7 +312,8 @@ function arrangeSquares() {
 		var availWidth = 100 - squaresPerRow * 2;
 		var width = availWidth / squaresPerRow;
 		var height = width;
-		for(i = 0; i < squares.length; i++) {
+		l = squares.length;
+		for(i = 0; i < l; i++) {
 			squares[i].style.width = width + "%";
 			squares[i].style.height = height + "%";
 		}
@@ -337,7 +341,9 @@ function buildSquaresHTML() {
 function buildSquaresArr() {
 	var els = document.querySelectorAll("#color-container .square");
 	squares = [];
-	for (var i = 0; i < els.length; i++) {
+	var i; 
+	var l = els.length;
+	for (i = 0; i < l; i++) {
 		squares[i] = els[i];
 	}
 }
@@ -348,7 +354,9 @@ function buildSquares() {
 	remaining = optionCount;
 	buildSquaresHTML();
 	buildSquaresArr();
-	for (var i = 0; i < squares.length; i++) {
+	var i;
+	var l = squares.length;
+	for (i = 0; i < l; i++) {
 		squares[i].addEventListener("click", onLeftClick);
 		squares[i].addEventListener("contextmenu", onRightClick);
 		squares[i].addEventListener("mouseover", dragOnOff);
@@ -370,7 +378,9 @@ function newGame() {
 	WIN_ICON.classList.add("hidden");
 	buildSquares();
 	var textFieldArray = document.querySelectorAll(".squareText");
-	for (var i = 0; i < textFieldArray.length; i++) {
+	var i;
+	var l = textFieldArray.length;
+	for (i = 0; i < l; i++) {
 		textFieldArray[i].querySelector(".winText").classList.add("hidden");
 		textFieldArray[i].querySelector(".squareRGB").classList.add("hidden");
 		textFieldArray[i].classList.add("hidden");
