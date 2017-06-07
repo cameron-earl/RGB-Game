@@ -1,26 +1,30 @@
-"use strict";
+'use strict';
 
 // ************ GLOBAL VARIABLES ************
 
-const STANDARD_BACKGROUND_COLOR = "232323";
-const BASIC_COLORS = ["red","green","blue","yellow","cyan","magenta"];
+var STANDARD_BACKGROUND_COLOR = "SteelBlue";
+var BASIC_COLORS = ["red","green","blue","yellow","cyan","magenta"];
+var HINT_PROBABILITY = 0.3;
 
-const BODY = document.querySelector("body");
-const HEADER = document.querySelector("#header");
-const COLOR_CONTAINER = document.querySelector("#color-container");
-const WHITE_BAR = document.querySelector("#white-bar");
-const STATS = document.querySelector("#stats");
-const MESSAGE = document.querySelector("#message");
-const LEVEL_INPUT = document.querySelector("#levelInput");
-const WIN_COUNT = document.querySelector("#winCount");
-const LOSS_COUNT = document.querySelector("#lossCount");
-const WINNING_COLOR_DISPLAY = document.querySelector("#winningColor");
-const NEW_GAME_BTN = document.querySelector("#newGameBtn");
-const INFO_BTN = document.querySelector("#learnMore");
-const INFO = document.querySelector("#info-screen");
-const FLASH = document.querySelector("#flash");
-const WIN_ICON = document.querySelector("#winUp");
-const LOSE_ICON = document.querySelector("#lossUp");
+var BODY = document.querySelector("body");
+var HEADER = document.querySelector("#header");
+var H1 = document.querySelector("#header h1");
+var COLOR_CONTAINER = document.querySelector("#color-container");
+var WHITE_BAR = document.querySelector("#white-bar");
+var STATS = document.querySelector("#stats");
+var MSG_AREA = document.querySelector("#messageArea");
+var MESSAGE = document.querySelector("#message");
+var LEVEL_INPUT = document.querySelector("#levelInput");
+var WIN_COUNT = document.querySelector("#winCount");
+var LOSS_COUNT = document.querySelector("#lossCount");
+var WINNING_COLOR_DISPLAY = document.querySelector("#winningColor");
+var NEW_GAME_BTN = document.querySelector("#newGameBtn");
+var INFO_BTN = document.querySelector("#learnMore");
+var INFO = document.querySelector("#info-screen");
+var FLASH = document.querySelector("#flash");
+var WIN_ICON = document.querySelector("#winUp");
+var LOSE_ICON = document.querySelector("#lossUp");
+var STATS_SWITCH_ICON = document.querySelector("#stats .icon-exchange");
 
 var currentLevel = 2;
 var highestLevel = 2;
@@ -44,7 +48,6 @@ var MESSAGES = [
 	"Click the color described by the RGB code above.",
 	"Hints sometimes appear up here.",
 	"Beating the hardest level will unlock a harder one.",
-	"See the code at <a href='https://www.github.com/randomraccoon/RGB-Game'>github.com/randomraccoon/RGB-Game</a>",
 	"You won't be able to unlock higher levels just by guessing.",
 	"You can click here to reveal stats and options.",
 	"How high of a level can you beat?",
@@ -54,13 +57,13 @@ var MESSAGES = [
 	"Red and blue in equal amounts make magenta.",
 	"If red, green and blue are equal it makes a shade of gray.",
 	"If all the numbers are high, it will be very light.",
-	"If RGB doesn't make much sense, you might prefer HSL.",
 	"To start a new game, you can also click a square.",
 	"You always can switch to an easier level if it gets too difficult.",
 	"To turn off auto-advance, just change off the hardest level.",
 	"You can eliminate squares with a right-click or a shift+left-click.",
 	"Bold colors have both a low value and a high value in the RGB code.",
-	"You can shift+click and drag to easily eliminate many squares."
+	"You can shift+click and drag to easily eliminate many squares.",
+	"Click the info button to find out about how this was made."
 ];
 
 // ************ STATIC FUNCTIONS ************
@@ -94,55 +97,101 @@ function countFromLevel(level) {
 
 // ************ FUNCTIONS USING GLOBAL VARS ************
 
+function setupEvents() {
+	WHITE_BAR.addEventListener("click", function() {
+		if (!gameOver) {
+			toggleWhiteBarView();
+		}
+	});
+
+	BODY.addEventListener("contextmenu", function (ev) {
+		ev.preventDefault();
+	});
+
+	document.addEventListener("mousedown", function () {
+		mouseDown = true;
+	});
+
+	document.addEventListener("mouseup", function () {
+		mouseDown = false;
+	});
+
+	document.addEventListener("keydown", function (ev) {
+	  	if (ev.shiftKey) {
+	  		if (!shiftDown) {
+	  			shiftDown = true;
+	  		}
+  		}
+  	});
+
+  	document.addEventListener("keyup", function (ev) {
+  		if (!ev.shiftKey && shiftDown) {
+  			shiftDown = false;
+  			arrangeSquares();
+  		}
+  	});
+
+	HEADER.addEventListener("contextmenu", function (ev) {
+		ev.stopPropagation();
+	});
+
+	NEW_GAME_BTN.addEventListener("click", function (ev) {
+		ev.stopPropagation();
+		newGame();
+	});
+
+	INFO_BTN.addEventListener("click", function (ev) {
+		ev.stopPropagation();
+		toggleInfoScreen();
+	});
+
+	LEVEL_INPUT.addEventListener("click", function (ev) {
+		ev.stopPropagation();
+	});
+
+	LEVEL_INPUT.value = currentLevel;
+
+	INFO.addEventListener("contextmenu", function (ev) {
+		ev.stopPropagation();
+	});
+}
+
+function toggleWhiteBarView() {
+	updateWhiteBar();
+	STATS.classList.toggle("hidden");
+	MSG_AREA.classList.toggle("hidden");
+}
+
+function displayStats() {
+	if (STATS.classList.contains("hidden")) {
+		toggleWhiteBarView();
+	}
+}
+
+function displayMessage() {
+	if (MSG_AREA.classList.contains("hidden")) {
+		toggleWhiteBarView();
+	}
+}
+
+function updateWhiteBar() {
+	WIN_COUNT.textContent = winCount;
+	LOSS_COUNT.textContent = lossCount;
+	if (squares.length === optionCount && winCount === 0) {
+		MESSAGE.textContent = MESSAGES[0];
+	} else {
+		MESSAGE.textContent = squares.length + " left. " + getRandomMessage();
+	}
+}
+
 function getRandomMessage() {
 	var msg;
-	var probabilityOfHint = 0.3;
-	if (Math.random() < probabilityOfHint) {
+	if (Math.random() < HINT_PROBABILITY) {
 		msg = hint();
 	} else {
 		msg = MESSAGES[randInt(0,MESSAGES.length-1)];
 	}
 	return msg;
-}
-
-function toggleStatsView() {
-	updateStats();
-	STATS.classList.toggle("hidden");
-	MESSAGE.classList.toggle("hidden");
-}
-
-function displayStats() {
-	updateStats();
-	if (STATS.classList.contains("hidden")) {
-		toggleStatsView();
-	}
-}
-
-function displayMessage() {
-	updateMessage();
-	if (MESSAGE.classList.contains("hidden")) {
-		toggleStatsView();
-	}
-}
-
-function updateStats() {
-	WIN_COUNT.textContent = winCount;
-	LOSS_COUNT.textContent = lossCount;
-	updateMessage();
-}
-
-function updateMessage() {
-	if (squares.length === optionCount && winCount === 0) {
-		MESSAGE.textContent = MESSAGES[0];
-	} else {
-		MESSAGE.innerHTML = squares.length + " left. " + getRandomMessage();
-	}
-	var anchor = MESSAGE.querySelector("a");
-	if (anchor) {
-		anchor.addEventListener("click",function(ev) {
-			ev.stopPropagation();
-		});
-	}
 }
 
 function hint() {
@@ -185,7 +234,7 @@ function win(el) {
 	}
 	el.classList.add("winner");
 	WIN_ICON.classList.remove("hidden");
-	HEADER.style.backgroundColor = winningColor;
+	H1.style.backgroundColor = winningColor;
 	if (squares.length > 1) {
 		var index = squares.indexOf(el);
 		for(var i = squares.length - 1; i >= 0; i--) {
@@ -199,13 +248,13 @@ function win(el) {
 	textField.textContent = newLevelUnlocked ? newLevelMsg : winMsg;
 	textField.classList.remove("hidden");
 	squares[0].querySelector(".squareText").classList.remove("hidden");
-	displayStats();
+	endGame();
 	flash();
 }
 
 function lose(el) {
 	lossCount++;
-	displayStats();
+	endGame();
 	el.classList.add("loser");
 	flash("red");
 	LOSE_ICON.classList.remove("hidden");
@@ -225,6 +274,12 @@ function lose(el) {
 		squares[i].classList.add("noTransform");
 	}
 	gameOver = true;
+}
+
+// includes functions that trigger in both win and loss conditions
+function endGame() {
+	displayStats();
+	STATS_SWITCH_ICON.classList.add("hidden");
 }
 
 function addNewLevel() {
@@ -255,42 +310,6 @@ function arrangeSquares() {
 			squares[i].style.height = height + "%";
 		}
 	}
-}
-
-function newGame() {
-	gameOver = false;
-	if (currentLevel !== +LEVEL_INPUT.value) {
-		currentLevel = +LEVEL_INPUT.value;
-	} else if (newLevelUnlocked) {
-		LEVEL_INPUT.value = highestLevel;
-		currentLevel = highestLevel;
-	}
-	newLevelUnlocked = false;
-	LOSE_ICON.classList.add("hidden");
-	WIN_ICON.classList.add("hidden");
-	buildSquares();
-	var textFieldArray = document.querySelectorAll(".squareText");
-	for (var i = 0; i < textFieldArray.length; i++) {
-		textFieldArray[i].querySelector(".winText").classList.add("hidden");
-		textFieldArray[i].querySelector(".squareRGB").classList.add("hidden");
-		textFieldArray[i].classList.add("hidden");
-	}
-	buildSquaresArr();
-	winningIndex = randInt(0,optionCount);
-	winningColor = getRandomColor();
-	for (i = 0; i < optionCount; i++) {
-		if (i === winningIndex) {
-			colors[i] = winningColor;
-		} else {
-			colors[i] = getRandomColor();
-		}
-		squares[i].style.backgroundColor = colors[i];
-		squares[i].classList.remove("hidden","winner","loser");
-	}
-	WINNING_COLOR_DISPLAY.textContent = winningColor;
-	arrangeSquares();
-	HEADER.style.backgroundColor = STANDARD_BACKGROUND_COLOR;
-	displayMessage();
 }
 
 function buildSquaresHTML() {
@@ -331,6 +350,44 @@ function buildSquares() {
 		squares[i].addEventListener("mouseover", dragOnOff);
 		squares[i].addEventListener("mouseout", dragOnOff);
 	}
+}
+
+
+function newGame() {
+	gameOver = false;
+	if (currentLevel !== +LEVEL_INPUT.value) {
+		currentLevel = +LEVEL_INPUT.value;
+	} else if (newLevelUnlocked) {
+		LEVEL_INPUT.value = highestLevel;
+		currentLevel = highestLevel;
+	}
+	newLevelUnlocked = false;
+	LOSE_ICON.classList.add("hidden");
+	WIN_ICON.classList.add("hidden");
+	buildSquares();
+	var textFieldArray = document.querySelectorAll(".squareText");
+	for (var i = 0; i < textFieldArray.length; i++) {
+		textFieldArray[i].querySelector(".winText").classList.add("hidden");
+		textFieldArray[i].querySelector(".squareRGB").classList.add("hidden");
+		textFieldArray[i].classList.add("hidden");
+	}
+	buildSquaresArr();
+	winningIndex = randInt(0,optionCount);
+	winningColor = getRandomColor();
+	for (i = 0; i < optionCount; i++) {
+		if (i === winningIndex) {
+			colors[i] = winningColor;
+		} else {
+			colors[i] = getRandomColor();
+		}
+		squares[i].style.backgroundColor = colors[i];
+		squares[i].classList.remove("hidden","winner","loser");
+	}
+	WINNING_COLOR_DISPLAY.textContent = winningColor;
+	arrangeSquares();
+	H1.style.backgroundColor = STANDARD_BACKGROUND_COLOR;
+	STATS_SWITCH_ICON.classList.remove("hidden");
+	displayMessage();
 }
 
 function dragOnOff() {
@@ -398,86 +455,7 @@ function toggleInfoScreen() {
 	INFO_BTN.classList.toggle("icon-squares");
 }
 
-function initialize() {
-	WHITE_BAR.addEventListener("click",toggleStatsView);
-
-	BODY.addEventListener("contextmenu", function (ev) {
-		ev.preventDefault();
-	});
-
-	document.addEventListener("mousedown", function () {
-		mouseDown = true;
-	});
-
-	document.addEventListener("mouseup", function () {
-		mouseDown = false;
-	});
-
-	document.addEventListener("keydown", function (ev) {
-	  	if (ev.shiftKey) {
-	  		if (!shiftDown) {
-	  			shiftDown = true;
-	  		}
-  		}
-  	});
-
-  	document.addEventListener("keyup", function (ev) {
-  		if (!ev.shiftKey && shiftDown) {
-  			shiftDown = false;
-  			arrangeSquares();
-  		}
-  	});
-
-	HEADER.addEventListener("contextmenu", function (ev) {
-		ev.stopPropagation();
-	});
-
-	NEW_GAME_BTN.addEventListener("click", function (ev) {
-		ev.stopPropagation();
-		newGame();
-	});
-
-	INFO_BTN.addEventListener("click", function (ev) {
-		ev.stopPropagation();
-		toggleInfoScreen();
-	});
-
-	LEVEL_INPUT.addEventListener("click", function (ev) {
-		ev.stopPropagation();
-	});
-
-	LEVEL_INPUT.value = currentLevel;
-
-	INFO.addEventListener("contextmenu", function (ev) {
-		ev.stopPropagation();
-	});
-
-	var anchors = INFO.querySelectorAll("a");
-	for (var i = 0; i < anchors.length; i++) {
-		anchors[i].setAttribute("target", "_blank");
-	}
-}
-
 // ************ CODE ************
 
-initialize();
+setupEvents();
 newGame();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
