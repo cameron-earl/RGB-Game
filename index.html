@@ -1,61 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8" />
-	<title>RGB Game</title>
-	<link rel="stylesheet" type="text/css" href="css/rgbGame.css">
-	<link href="css/fonts.css" rel="stylesheet">
-	<link rel="shortcut icon" type="image/x-icon" href="rgb2.ico" />
-	<link rel="stylesheet" type="text/css" href="css/fontello.css">
-	<base target="_blank">
-</head>
-<body>
-	<div id="header">
-		<h1>The <span id="winningColor">RGB</span> Game</h1>
-		<div id="white-bar" class="clickable">
-			<span id="messageArea">
-				<span id="message"> Click the color that matches the color code above! You can right-click to eliminate.</span>
-				<i class="icon-exchange infoBarBtn" aria-hidden="true"></i>
-			</span>
 
-			<span id="stats" class="hidden">
+<head>
+    <meta charset="utf-8" />
+    <title>RGB Game</title>
+    <link rel="stylesheet" type="text/css" href="css/rgbGame.css">
+    <link href="css/fonts.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="rgb2.ico" />
+    <link rel="stylesheet" type="text/css" href="css/fontello.css">
+    <base target="_blank">
+</head>
+
+<body>
+    <div id="header">
+        <h1>The <span id="winningColor">RGB</span> Game</h1>
+        <div id="white-bar" class="clickable">
+            <span id="messageArea">
+				<span id="message"> Click the color that matches the color code above! You can right-click to eliminate.</span>
+            <i class="icon-exchange infoBarBtn" aria-hidden="true"></i>
+            </span>
+            <span id="stats" class="hidden">
 				<i class="icon-exchange infoBarBtn" aria-hidden="true"></i>
 				<span class="tab"></span>
-				<span id="newGameBtn" class="infoBarBtn">New Game</span>
-				<span class="tab"></span>
-				Wins: <span id="winCount"></span><i id="winUp" class="icon-up hidden" aria-hidden="true"></i>
-				<span class="tab"></span>
-				Losses: <span id="lossCount"></span><i id="lossUp" class="icon-up hidden" aria-hidden="true"></i>
-		 		<span class="tab"></span>
-				Level:<input id="levelInput" type="number" min="2" max="2" dir="rtl"><sup>2</sup>
-				<span class="tab"></span>
-				<i id="learnMore" class="icon-info infoBarBtn" aria-hidden="true"></i>
-			</span>
-		</div>
-	</div>
-	<div id="color-container">
-	</div>
-	<div id='info-screen' class="hidden">
-		<div id='info-screen-text'>
-			<p><i class="icon-mail" aria-hidden="true"></i> Please contact me at <a href='mailto:developer.cameron@gmail.com'>developer.cameron@gmail.com</a>
-			if you have any feedback, questions, or are interested in hiring me.</p>
-			<p><i class="icon-github" aria-hidden="true"></i> The code for this site can be found on github:<br>
-			<a href='https://www.github.com/randomraccoon/RGB-Game'>https://www.github.com/randomraccoon/RGB-Game</a></p>
-			
-			<i class="icon-code" aria-hidden="true"></i> Tools used:
-			<ul>
-				<li><a href="https://pages.github.com/">Github Pages</a>
-				<li><a href="https://www.sublimetext.com/">Sublime Text</a>
-				<li><a href="http://jshint.com/">JSHint</a></li>
-				<li><a href="https://fonts.google.com/">Google Fonts</a>
-				<li><a href="http://fontawesome.io/">Font Awesome</a>
-				<li><a href="http://fontello.com">Fontello</a>
-				<li><a href="https://stackoverflow.com/">Stack Overflow</a>
-				<li>Colt Steele's excellent <a href='https://www.udemy.com/the-web-developer-bootcamp/'>web development course</a>
-			</ul>
-		</div>
-	</div>
-	<div id="flash"></div>
-<script type="text/javascript" src="rgbGame.js"></script>
+            <span id="newGameBtn" class="infoBarBtn">New Game</span>
+            <span class="tab"></span> Wins: <span id="winCount"></span><i id="winUp" class="icon-up hidden" aria-hidden="true"></i>
+            <span class="tab"></span> Losses: <span id="lossCount"></span><i id="lossUp" class="icon-up hidden" aria-hidden="true"></i>
+            <span class="tab"></span> Level:
+            <input id="levelInput" type="number" min="2" max="2" dir="rtl"><sup>2</sup>
+            <span class="tab"></span>
+            <i id="learnMore" class="icon-info infoBarBtn" aria-hidden="true"></i>
+            </span>
+        </div>
+    </div>
+    <div id="color-container">
+    </div>
+    <div id='info-screen' class="hidden">
+        <div id='info-screen-text'>
+            <p><i class="icon-mail" aria-hidden="true"></i> Please contact me at <a href='mailto:developer.cameron@gmail.com'>developer.cameron@gmail.com</a> if you have any feedback, questions, or are interested in hiring me.</p>
+            <p><i class="icon-github" aria-hidden="true"></i> The code for this site can be found on github:
+                <br>
+                <a href='https://www.github.com/randomraccoon/RGB-Game'>https://www.github.com/randomraccoon/RGB-Game</a></p>
+            <i class="icon-code" aria-hidden="true"></i> Tools used:
+            <ul>
+                <li><a href="https://pages.github.com/">Github Pages</a></li>
+                <li><a href="https://www.sublimetext.com/">Sublime Text</a></li>
+                <li><a href="http://jshint.com/">JSHint</a></li>
+                <li><a href="https://fonts.google.com/">Google Fonts</a></li>
+                <li><a href="http://fontawesome.io/">Font Awesome</a></li>
+                <li><a href="http://fontello.com">Fontello</a></li>
+                <li><a href="https://stackoverflow.com/">Stack Overflow</a></li>
+                <li>Colt Steele's excellent <a href='https://www.udemy.com/the-web-developer-bootcamp/'>web development course</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="flash"></div>
+    <script type="text/javascript" src="rgbGame.js"></script>
 </body>
+
 </html>
