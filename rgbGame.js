@@ -165,12 +165,16 @@ function toggleWhiteBarView() {
 function displayStats() {
 	if (STATS.classList.contains("hidden")) {
 		toggleWhiteBarView();
+	} else {
+		updateWhiteBar();
 	}
 }
 
 function displayMessage() {
 	if (MSG_AREA.classList.contains("hidden")) {
 		toggleWhiteBarView();
+	} else {
+		updateWhiteBar();
 	}
 }
 

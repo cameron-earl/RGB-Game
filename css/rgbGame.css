@@ -102,7 +102,7 @@ h1 {
 }
 
 div.square.eliminated {
-	background-color: 232323 !important; 
+	background-color: #232323 !important; 
 	box-shadow: none;
 }
 
