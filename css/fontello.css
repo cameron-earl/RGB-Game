@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'fontello';
-  src: url('../font/fontello.eot?84822166');
-  src: url('../font/fontello.eot?84822166#iefix') format('embedded-opentype'),
-       url('../font/fontello.woff2?84822166') format('woff2'),
-       url('../font/fontello.woff?84822166') format('woff'),
-       url('../font/fontello.ttf?84822166') format('truetype'),
-       url('../font/fontello.svg?84822166#fontello') format('svg');
+  src: url('../font/fontello.eot?55640112');
+  src: url('../font/fontello.eot?55640112#iefix') format('embedded-opentype'),
+       url('../font/fontello.woff2?55640112') format('woff2'),
+       url('../font/fontello.woff?55640112') format('woff'),
+       url('../font/fontello.ttf?55640112') format('truetype'),
+       url('../font/fontello.svg?55640112#fontello') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?84822166#fontello') format('svg');
+    src: url('../font/fontello.svg?55640112#fontello') format('svg');
   }
 }
 */
@@ -45,21 +45,22 @@
   margin-left: .2em;
  
   /* you can be more comfortable with increased icons size */
-   font-size: 120%; 
+  /* font-size: 120%; */
  
   /* Font smoothing. That was taken from TWBS */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
  
   /* Uncomment for 3D effect */
-   /*text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
  
 .icon-info:before { content: '\e800'; } /* '' */
 .icon-mail:before { content: '\e801'; } /* '' */
 .icon-squares:before { content: '\e802'; } /* '' */
+.icon-up-open:before { content: '\e803'; } /* '' */
+.icon-down-open:before { content: '\e804'; } /* '' */
 .icon-github:before { content: '\f09b'; } /* '' */
 .icon-up:before { content: '\f0aa'; } /* '' */
-.icon-down:before { content: '\f0ab'; } /* '' */
 .icon-exchange:before { content: '\f0ec'; } /* '' */
 .icon-code:before { content: '\f121'; } /* '' */

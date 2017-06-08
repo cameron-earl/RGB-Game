@@ -2,9 +2,11 @@
 
 // ************ GLOBAL VARIABLES ************
 
+var DEVELOPER_MODE = true;
 var STANDARD_BACKGROUND_COLOR = "SteelBlue";
 var BASIC_COLORS = ["red", "green", "blue"];
 var HINT_PROBABILITY = 0.3;
+var MIN_LEVEL = 2;
 
 var BODY = document.querySelector("body");
 var HEADER = document.querySelector("#header");
@@ -14,7 +16,9 @@ var WHITE_BAR = document.querySelector("#white-bar");
 var STATS = document.querySelector("#stats");
 var MSG_AREA = document.querySelector("#messageArea");
 var MESSAGE = document.querySelector("#message");
-var LEVEL_INPUT = document.querySelector("#levelInput");
+var LEVEL_DISPLAY = document.querySelector("#level");
+var LEVEL_UP_BTN = document.querySelector(".level-spinner .icon-up-open");
+var LEVEL_DOWN_BTN = document.querySelector(".level-spinner .icon-down-open");
 var WIN_COUNT = document.querySelector("#winCount");
 var LOSS_COUNT = document.querySelector("#lossCount");
 var WINNING_COLOR_DISPLAY = document.querySelector("#winningColor");
@@ -26,12 +30,12 @@ var WIN_ICON = document.querySelector("#winUp");
 var LOSE_ICON = document.querySelector("#lossUp");
 var STATS_SWITCH_ICON = document.querySelector("#stats .icon-exchange");
 
-var currentLevel = 2;
-var highestLevel = 2;
+var currentLevel = MIN_LEVEL;
+var highestLevel = MIN_LEVEL;
 var newLevelUnlocked = false;
-var optionCount = 4;
+var optionCount = countFromLevel(MIN_LEVEL);
 var remaining = optionCount;
-var rowCount = 2;
+var rowCount = MIN_LEVEL;
 var winningColor = "RGB";
 var winMsg = "You win!";
 var newLevelMsg = "You won and unlocked the next level!";
@@ -97,7 +101,14 @@ function countFromLevel(level) {
 
 // ************ FUNCTIONS USING GLOBAL VARS ************
 
-function setupEvents() {
+function initialize() {
+    var heightBelowHeader = (window.innerHeight - HEADER.clientHeight);
+    INFO.style.height = heightBelowHeader + "px";
+    //- 10 to adjust for square expansion
+    heightBelowHeader = (heightBelowHeader - 10) + "px";
+    COLOR_CONTAINER.style.height = heightBelowHeader;
+    COLOR_CONTAINER.style.width = heightBelowHeader;
+
     WHITE_BAR.addEventListener("click", function() {
         if (!gameOver) {
             toggleWhiteBarView();
@@ -145,11 +156,17 @@ function setupEvents() {
         toggleInfoScreen();
     });
 
-    LEVEL_INPUT.addEventListener("click", function(ev) {
+    LEVEL_UP_BTN.addEventListener("click", function(ev) {
         ev.stopPropagation();
+        changeLevel(1);
     });
 
-    LEVEL_INPUT.value = currentLevel;
+    LEVEL_DOWN_BTN.addEventListener("click", function(ev) {
+        ev.stopPropagation();
+        changeLevel(-1);
+    });
+
+    LEVEL_DISPLAY.value = currentLevel;
 
     INFO.addEventListener("contextmenu", function(ev) {
         ev.stopPropagation();
@@ -290,9 +307,15 @@ function endGame() {
 
 function addNewLevel() {
     highestLevel++;
-    LEVEL_INPUT.max = highestLevel;
-    LEVEL_INPUT.value = currentLevel;
     newLevelUnlocked = true;
+}
+
+function changeLevel(n) {
+    var newLevel = currentLevel + n;
+    if (DEVELOPER_MODE || (newLevel <= highestLevel && newLevel >= MIN_LEVEL)) {
+        currentLevel = newLevel;
+        newGame();
+    }
 }
 
 function arrangeSquares() {
@@ -308,14 +331,19 @@ function arrangeSquares() {
         }
 
         rowCount = Math.ceil(Math.sqrt(squares.length));
-        var squaresPerRow = rowCount;
-        var availWidth = 100 - squaresPerRow * 2;
-        var width = availWidth / squaresPerRow;
+        var availWidth = 96.0;
+        var margin = (100 - availWidth) / rowCount / 2;
+        if (margin < 0.2) {
+            margin = 0;
+            availWidth = 100;
+        }
+        var width = availWidth / rowCount;
         var height = width;
         l = squares.length;
         for (i = 0; i < l; i++) {
             squares[i].style.width = width + "%";
             squares[i].style.height = height + "%";
+            squares[i].style.margin = margin + "%";
         }
     }
 }
@@ -367,13 +395,11 @@ function buildSquares() {
 
 function newGame() {
     gameOver = false;
-    if (currentLevel !== +LEVEL_INPUT.value) {
-        currentLevel = +LEVEL_INPUT.value;
-    } else if (newLevelUnlocked) {
-        LEVEL_INPUT.value = highestLevel;
+    if (newLevelUnlocked) {
         currentLevel = highestLevel;
+        newLevelUnlocked = false;
     }
-    newLevelUnlocked = false;
+    LEVEL_DISPLAY.textContent = currentLevel;
     LOSE_ICON.classList.add("hidden");
     WIN_ICON.classList.add("hidden");
     buildSquares();
@@ -404,21 +430,19 @@ function newGame() {
     displayMessage();
 }
 
-function dragOnOff() {
-    var ev = window.event;
-    if (mouseDown && ev.shiftKey) {
-        onRightClick();
+function dragOnOff(ev) {
+    if (mouseDown && shiftDown) {
+        onRightClick(ev);
     }
 }
 
-function onLeftClick() {
-    var ev = window.event;
+function onLeftClick(ev) {
     var el = ev.currentTarget;
     if (el.classList.contains("eliminated")) {
         return;
     }
     if (ev.shiftKey) {
-        onRightClick();
+        onRightClick(ev);
         return;
     }
     if (!gameOver) {
@@ -432,8 +456,7 @@ function onLeftClick() {
     }
 }
 
-function onRightClick() {
-    var ev = window.event;
+function onRightClick(ev) {
     ev.preventDefault();
     var el = ev.currentTarget;
     if (el.classList.contains("eliminated")) {
@@ -470,6 +493,5 @@ function toggleInfoScreen() {
 }
 
 // ************ CODE ************
-
-setupEvents();
+initialize();
 newGame();
