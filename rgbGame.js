@@ -5,7 +5,7 @@
 var DEVELOPER_MODE = false;
 var STANDARD_BACKGROUND_COLOR = "SteelBlue";
 var BASIC_COLORS = ["red", "green", "blue"];
-var HINT_PROBABILITY = 0.3;
+var HINT_PROBABILITY = 0.5;
 var MIN_LEVEL = 2;
 
 var BODY = document.querySelector("body");
@@ -21,7 +21,9 @@ var LEVEL_UP_BTN = document.querySelector(".level-spinner .icon-up-open");
 var LEVEL_DOWN_BTN = document.querySelector(".level-spinner .icon-down-open");
 var WIN_COUNT = document.querySelector("#winCount");
 var LOSS_COUNT = document.querySelector("#lossCount");
-var WINNING_COLOR_DISPLAY = document.querySelector("#winningColor");
+var RED_DISPLAY = document.querySelector("#winningColor .redVal");
+var GREEN_DISPLAY = document.querySelector("#winningColor .greenVal");
+var BLUE_DISPLAY = document.querySelector("#winningColor .blueVal");
 var NEW_GAME_BTN = document.querySelector("#newGameBtn");
 var INFO_BTN = document.querySelector("#learnMore");
 var INFO = document.querySelector("#info-screen");
@@ -36,7 +38,9 @@ var newLevelUnlocked = false;
 var optionCount = countFromLevel(MIN_LEVEL);
 var remaining = optionCount;
 var rowCount = MIN_LEVEL;
-var winningColor = "RGB";
+var winningColor;
+var winningColorArr;
+var hints;
 var winMsg = "You win!";
 var newLevelMsg = "You won and unlocked the next level!";
 var gameOver = false;
@@ -102,12 +106,28 @@ function countFromLevel(level) {
 // ************ FUNCTIONS USING GLOBAL VARS ************
 
 function initialize() {
+
+    setHeights();
+
+    LEVEL_DISPLAY.value = currentLevel;
+
+    createEventListeners();
+}
+
+function setHeights() {
     var heightBelowHeader = (window.innerHeight - HEADER.clientHeight);
     INFO.style.height = heightBelowHeader + "px";
-    //- 10 to adjust for square expansion
-    heightBelowHeader = (heightBelowHeader - 10) + "px";
+    var ccStyle = window.getComputedStyle(COLOR_CONTAINER);
+    var ccPaddingTop = ccStyle.getPropertyValue("padding-top");
+    var ccPaddingBottom = ccStyle.getPropertyValue("padding-top");
+    var paddingNum = +ccPaddingTop.replace(/\D+$/g, "");
+    paddingNum += +ccPaddingBottom.replace(/\D+$/g, "");
+    heightBelowHeader = (heightBelowHeader - paddingNum) + "px";
     COLOR_CONTAINER.style.height = heightBelowHeader;
     COLOR_CONTAINER.style.width = heightBelowHeader;
+}
+
+function createEventListeners() {
 
     WHITE_BAR.addEventListener("click", function() {
         if (!gameOver) {
@@ -166,8 +186,6 @@ function initialize() {
         changeLevel(-1);
     });
 
-    LEVEL_DISPLAY.value = currentLevel;
-
     INFO.addEventListener("contextmenu", function(ev) {
         ev.stopPropagation();
     });
@@ -216,20 +234,22 @@ function getRandomMessage() {
 }
 
 function hint() {
-    var rgbArr = rgbComponents(winningColor);
-    var rgbArr2 = rgbArr.slice();
-    var maxIndex = rgbArr.indexOf(Math.max(rgbArr2[0], rgbArr2[1], rgbArr2[2]));
-    var midIndex = rgbArr.indexOf(Math.max(rgbArr2[0], rgbArr2[1]));
+    return hints[randInt(0, hints.length - 1)];
+}
+
+function createHints() {
+    var rgbArr2 = winningColorArr.slice();
+    var maxIndex = winningColorArr.indexOf(Math.max(rgbArr2[0], rgbArr2[1], rgbArr2[2]));
+    var midIndex = winningColorArr.indexOf(Math.max(rgbArr2[0], rgbArr2[1]));
     rgbArr2.splice(midIndex, 1);
-    var minIndex = rgbArr.indexOf(rgbArr2[0]);
-    var boldRating = rgbArr[maxIndex] - rgbArr[minIndex];
+    var minIndex = winningColorArr.indexOf(rgbArr2[0]);
+    var boldRating = winningColorArr[maxIndex] - winningColorArr[minIndex];
     var maxHint = "This color sure has a lot of " + BASIC_COLORS[maxIndex] + ".";
     var minHint = "I'm not sure what color this is, but it's not " + BASIC_COLORS[minIndex] + ".";
     var boldHint =
         (boldRating >= 256 * 0.8) ? "This color is pretty bold." :
         (boldRating <= 256 * 0.2) ? "This color is pretty bland." : "";
-    var hints = [maxHint, minHint, boldHint];
-    return hints[randInt(0, hints.length - 1)];
+    hints = [maxHint, minHint, boldHint];
 }
 
 function eliminate(el) {
@@ -319,10 +339,17 @@ function changeLevel(n) {
 }
 
 function arrangeSquares() {
-    var i, l;
+    var i,
+        l,
+        eliminated,
+        margin,
+        availWidth,
+        width,
+        height;
+    var firstMarginlessRowcount = 13;
     if (!shiftDown || remaining === 1) {
         if (remaining <= Math.pow(rowCount - 1, 2)) {
-            var eliminated = COLOR_CONTAINER.querySelectorAll(".eliminated");
+            eliminated = COLOR_CONTAINER.querySelectorAll(".eliminated");
             l = eliminated.length;
             for (i = 0; i < l; i++) {
                 eliminated[i].classList.remove("eliminated");
@@ -331,26 +358,28 @@ function arrangeSquares() {
         }
 
         rowCount = Math.ceil(Math.sqrt(squares.length));
-        var availWidth = 96.0;
-        var margin = (100 - availWidth) / rowCount / 2;
-        if (margin < 0.2) {
+        if (rowCount >= firstMarginlessRowcount) {
             margin = 0;
             availWidth = 100;
+        } else {
+            margin = "1%";
+            availWidth = 100 - (2 * rowCount);
         }
-        var width = availWidth / rowCount;
-        var height = width;
+        width = availWidth / rowCount;
+        height = width;
         l = squares.length;
         for (i = 0; i < l; i++) {
             squares[i].style.width = width + "%";
             squares[i].style.height = height + "%";
-            squares[i].style.margin = margin + "%";
+            squares[i].style.margin = margin;
         }
     }
 }
 
 function buildSquaresHTML() {
+    var i;
     var squareHTML = "";
-    for (var i = 0; i < optionCount; i++) {
+    for (i = 0; i < optionCount; i++) {
         squareHTML +=
             '<div class="square">' +
             '<div class="squareText">' +
@@ -367,23 +396,25 @@ function buildSquaresHTML() {
 }
 
 function buildSquaresArr() {
+    var i, l;
     var els = document.querySelectorAll("#color-container .square");
     squares = [];
-    var i;
-    var l = els.length;
+
+    l = els.length;
     for (i = 0; i < l; i++) {
         squares[i] = els[i];
     }
 }
 
 function buildSquares() {
+    var i, l;
     colors = [];
     optionCount = countFromLevel(currentLevel);
     remaining = optionCount;
     buildSquaresHTML();
     buildSquaresArr();
-    var i;
-    var l = squares.length;
+
+    l = squares.length;
     for (i = 0; i < l; i++) {
         squares[i].addEventListener("click", onLeftClick);
         squares[i].addEventListener("contextmenu", onRightClick);
@@ -394,6 +425,9 @@ function buildSquares() {
 
 
 function newGame() {
+    var i, l;
+    var textFieldArray;
+
     gameOver = false;
     if (newLevelUnlocked) {
         currentLevel = highestLevel;
@@ -403,9 +437,8 @@ function newGame() {
     LOSE_ICON.classList.add("hidden");
     WIN_ICON.classList.add("hidden");
     buildSquares();
-    var textFieldArray = document.querySelectorAll(".squareText");
-    var i;
-    var l = textFieldArray.length;
+    textFieldArray = document.querySelectorAll(".squareText");
+    l = textFieldArray.length;
     for (i = 0; i < l; i++) {
         textFieldArray[i].querySelector(".winText").classList.add("hidden");
         textFieldArray[i].querySelector(".squareRGB").classList.add("hidden");
@@ -414,6 +447,8 @@ function newGame() {
     buildSquaresArr();
     winningIndex = randInt(0, optionCount);
     winningColor = getRandomColor();
+    winningColorArr = rgbComponents(winningColor);
+    createHints();
     for (i = 0; i < optionCount; i++) {
         if (i === winningIndex) {
             colors[i] = winningColor;
@@ -423,7 +458,9 @@ function newGame() {
         squares[i].style.backgroundColor = colors[i];
         squares[i].classList.remove("hidden", "winner", "loser");
     }
-    WINNING_COLOR_DISPLAY.textContent = winningColor;
+    RED_DISPLAY.textContent = winningColorArr[0];
+    GREEN_DISPLAY.textContent = winningColorArr[1];
+    BLUE_DISPLAY.textContent = winningColorArr[2];
     arrangeSquares();
     H1.style.backgroundColor = STANDARD_BACKGROUND_COLOR;
     STATS_SWITCH_ICON.classList.remove("hidden");
@@ -457,8 +494,9 @@ function onLeftClick(ev) {
 }
 
 function onRightClick(ev) {
-    ev.preventDefault();
     var el = ev.currentTarget;
+
+    ev.preventDefault();
     if (el.classList.contains("eliminated")) {
         return;
     }

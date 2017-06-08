@@ -14,7 +14,6 @@ body {
     margin: 1%;
     border-radius: 15%;
     transition: background-color 0.3s, transform 0.3s;
-    /*box-shadow: 0 0 20px #000;*/
 }
 
 .square:hover {
@@ -44,6 +43,7 @@ body {
     width: 550px;
     height: 550px;
     margin: 0 auto;
+    padding: 15px;
     user-select: none;
 }
 
@@ -60,6 +60,7 @@ h1 {
     text-transform: uppercase;
     line-height: 1.3em;
     background-color: SteelBlue;
+    user-select: text;
 }
 
 #white-bar {
@@ -96,15 +97,15 @@ h1 {
 }
 
 .redVal {
-    color: #fcc;
+    color: #fee;
 }
 
 .greenVal {
-    color: #cfc;
+    color: #efe;
 }
 
 .blueVal {
-    color: #ccf;
+    color: #eef;
 }
 
 .eliminated {
