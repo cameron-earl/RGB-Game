@@ -2,7 +2,7 @@
 
 // ************ GLOBAL VARIABLES ************
 
-var DEVELOPER_MODE = true;
+var DEVELOPER_MODE = false;
 var STANDARD_BACKGROUND_COLOR = "SteelBlue";
 var BASIC_COLORS = ["red", "green", "blue"];
 var HINT_PROBABILITY = 0.3;
