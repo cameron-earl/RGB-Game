@@ -294,19 +294,21 @@ function win(el) {
 }
 
 function lose(el) {
+    var i,
+        l = squares.length,
+        winnerFound = false;
     lossCount++;
     endGame();
     el.classList.add("loser");
     flash("red");
     LOSE_ICON.classList.remove("hidden");
-    var i = 0,
-        l = squares.length;
+    
     for (i = 0; i < l; i++) {
         var rgbStr = squares[i].style.backgroundColor;
-        if (rgbStr === winningColor) {
+        if (!winnerFound && rgbStr === winningColor) {
             squares[i].classList.add("winner");
-        }
-        if (rowCount <= 11) {
+            winnerFound = true;
+        } else if (rowCount <= 11) {
             var rgbArr = rgbComponents(rgbStr);
             squares[i].querySelector(".redVal").textContent = rgbArr[0];
             squares[i].querySelector(".greenVal").textContent = rgbArr[1];
