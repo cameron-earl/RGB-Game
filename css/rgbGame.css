@@ -117,14 +117,20 @@ h1 {
     box-shadow: 0 0 20px #9f9;
 }
 
+.loser {
+    box-shadow: 0 0 20px #d00;
+}
+
+.winner,
+.loser {
+    position: relative;
+    z-index: 1;
+}
+
 .winner:hover,
 .loser:hover,
 .eliminated:hover {
     transform: none;
-}
-
-.loser {
-    box-shadow: 0 0 20px #d00;
 }
 
 .tab {
