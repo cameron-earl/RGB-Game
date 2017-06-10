@@ -155,6 +155,12 @@ function createEventListeners() {
         }
     });
 
+    document.addEventListener("keypress", function(ev) {
+        if (ev.key === " " || ev.key === "n") {
+            newGame();
+        }
+    });
+
     document.addEventListener("keyup", function(ev) {
         if (!ev.shiftKey && shiftDown) {
             shiftDown = false;
