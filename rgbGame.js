@@ -2,55 +2,55 @@
 
 // ************ GLOBAL VARIABLES ************
 
-var DEVELOPER_MODE = false;
-var STANDARD_BACKGROUND_COLOR = "SteelBlue";
-var BASIC_COLORS = ["red", "green", "blue"];
-var HINT_PROBABILITY = 0.5;
-var MIN_LEVEL = 2;
+var DEVELOPER_MODE = false,
+    STANDARD_BACKGROUND_COLOR = "SteelBlue",
+    BASIC_COLORS = ["red", "green", "blue"],
+    HINT_PROBABILITY = 0.5,
+    MIN_LEVEL = 2;
 
-var BODY = document.querySelector("body");
-var HEADER = document.querySelector("#header");
-var H1 = document.querySelector("#header h1");
-var COLOR_CONTAINER = document.querySelector("#color-container");
-var WHITE_BAR = document.querySelector("#white-bar");
-var STATS = document.querySelector("#stats");
-var MSG_AREA = document.querySelector("#messageArea");
-var MESSAGE = document.querySelector("#message");
-var LEVEL_DISPLAY = document.querySelector("#level");
-var LEVEL_UP_BTN = document.querySelector(".level-spinner .icon-up-open");
-var LEVEL_DOWN_BTN = document.querySelector(".level-spinner .icon-down-open");
-var WIN_COUNT = document.querySelector("#winCount");
-var LOSS_COUNT = document.querySelector("#lossCount");
-var RED_DISPLAY = document.querySelector("#winningColor .redVal");
-var GREEN_DISPLAY = document.querySelector("#winningColor .greenVal");
-var BLUE_DISPLAY = document.querySelector("#winningColor .blueVal");
-var NEW_GAME_BTN = document.querySelector("#newGameBtn");
-var INFO_BTN = document.querySelector("#learnMore");
-var INFO = document.querySelector("#info-screen");
-var FLASH = document.querySelector("#flash");
-var WIN_ICON = document.querySelector("#winUp");
-var LOSE_ICON = document.querySelector("#lossUp");
-var STATS_SWITCH_ICON = document.querySelector("#stats .icon-exchange");
+var BODY = document.querySelector("body"),
+    HEADER = document.querySelector("#header"),
+    H1 = document.querySelector("#header h1"),
+    COLOR_CONTAINER = document.querySelector("#color-container"),
+    WHITE_BAR = document.querySelector("#white-bar"),
+    STATS = document.querySelector("#stats"),
+    MSG_AREA = document.querySelector("#messageArea"),
+    MESSAGE = document.querySelector("#message"),
+    LEVEL_DISPLAY = document.querySelector("#level"),
+    LEVEL_UP_BTN = document.querySelector(".level-spinner .icon-up-open"),
+    LEVEL_DOWN_BTN = document.querySelector(".level-spinner .icon-down-open"),
+    WIN_COUNT = document.querySelector("#winCount"),
+    LOSS_COUNT = document.querySelector("#lossCount"),
+    RED_DISPLAY = document.querySelector("#winningColor .redVal"),
+    GREEN_DISPLAY = document.querySelector("#winningColor .greenVal"),
+    BLUE_DISPLAY = document.querySelector("#winningColor .blueVal"),
+    NEW_GAME_BTN = document.querySelector("#newGameBtn"),
+    INFO_BTN = document.querySelector("#learnMore"),
+    INFO = document.querySelector("#info-screen"),
+    FLASH = document.querySelector("#flash"),
+    WIN_ICON = document.querySelector("#winUp"),
+    LOSE_ICON = document.querySelector("#lossUp"),
+    STATS_SWITCH_ICON = document.querySelector("#stats .icon-exchange");
 
-var currentLevel = MIN_LEVEL;
-var highestLevel = MIN_LEVEL;
-var newLevelUnlocked = false;
-var optionCount = countFromLevel(MIN_LEVEL);
-var remaining = optionCount;
-var rowCount = MIN_LEVEL;
-var winningColor;
-var winningColorArr;
-var hints;
-var winMsg = "You win!";
-var newLevelMsg = "You won and unlocked the next level!";
-var gameOver = false;
-var colors = [];
-var squares = [];
-var winningIndex = 0;
-var winCount = 0;
-var lossCount = 0;
-var mouseDown = false;
-var shiftDown = false;
+var currentLevel = MIN_LEVEL,
+    highestLevel = MIN_LEVEL,
+    newLevelUnlocked = false,
+    optionCount = countFromLevel(MIN_LEVEL),
+    remaining = optionCount,
+    rowCount = MIN_LEVEL,
+    winningColor,
+    winningColorArr,
+    hints,
+    winMsg = "You win!",
+    newLevelMsg = "You won and unlocked the next level!",
+    gameOver = false,
+    colors = [],
+    squares = [],
+    winningIndex = 0,
+    winCount = 0,
+    lossCount = 0,
+    mouseDown = false,
+    shiftDown = false;
 
 var MESSAGES = [
     "Click the color described by the RGB code above.",
@@ -71,7 +71,8 @@ var MESSAGES = [
     "You can eliminate squares with a right-click or a shift+left-click.",
     "Bold colors have both a low value and a high value in the RGB code.",
     "You can shift+click and drag to easily eliminate many squares.",
-    "Click the info button to find out about how this was made."
+    "Click the info button to find out about how this was made.",
+    "Hit the space or N keys at any time to start a new game."
 ];
 
 // ************ STATIC FUNCTIONS ************
@@ -139,12 +140,16 @@ function createEventListeners() {
         ev.preventDefault();
     });
 
-    document.addEventListener("mousedown", function() {
-        mouseDown = true;
+    document.addEventListener("mousedown", function(ev) {
+        if (ev.button === 0) {
+            mouseDown = true;
+        }
     });
 
-    document.addEventListener("mouseup", function() {
-        mouseDown = false;
+    document.addEventListener("mouseup", function(ev) {
+        if (ev.button === 0) {
+            mouseDown = false;
+        }
     });
 
     document.addEventListener("keydown", function(ev) {
@@ -155,16 +160,16 @@ function createEventListeners() {
         }
     });
 
-    document.addEventListener("keypress", function(ev) {
-        if (ev.key === " " || ev.key === "n") {
-            newGame();
-        }
-    });
-
     document.addEventListener("keyup", function(ev) {
         if (!ev.shiftKey && shiftDown) {
             shiftDown = false;
             arrangeSquares();
+        }
+    });
+
+    document.addEventListener("keypress", function(ev) {
+        if (ev.key === " " || ev.key === "n") {
+            newGame();
         }
     });
 
@@ -251,7 +256,8 @@ function createHints() {
     var minIndex = winningColorArr.indexOf(rgbArr2[0]);
     var boldRating = winningColorArr[maxIndex] - winningColorArr[minIndex];
     var maxHint = "This color sure has a lot of " + BASIC_COLORS[maxIndex] + ".";
-    var minHint = "I'm not sure what color this is, but it's not " + BASIC_COLORS[minIndex] + ".";
+    var minHint = "I'm not sure what color this is, but it's not " 
+                    + BASIC_COLORS[minIndex] + ".";
     var boldHint =
         (boldRating >= 256 * 0.8) ? "This color is pretty bold." :
         (boldRating <= 256 * 0.2) ? "This color is pretty bland." : "";
@@ -428,6 +434,7 @@ function buildSquares() {
         squares[i].addEventListener("contextmenu", onRightClick);
         squares[i].addEventListener("mouseover", dragOnOff);
         squares[i].addEventListener("mouseout", dragOnOff);
+        squares[i].addEventListener("mousedown", dragOnOff);
     }
 }
 
@@ -476,7 +483,7 @@ function newGame() {
 }
 
 function dragOnOff(ev) {
-    if (mouseDown && shiftDown) {
+    if (shiftDown && (mouseDown || ev.type === "mousedown")) {
         onRightClick(ev);
     }
 }
@@ -539,5 +546,6 @@ function toggleInfoScreen() {
 }
 
 // ************ CODE ************
+
 initialize();
 newGame();
