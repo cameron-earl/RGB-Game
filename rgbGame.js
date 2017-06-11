@@ -144,6 +144,7 @@ function createEventListeners() {
         if (ev.button === 0) {
             mouseDown = true;
         }
+
     });
 
     document.addEventListener("mouseup", function(ev) {
@@ -153,27 +154,36 @@ function createEventListeners() {
     });
 
     document.addEventListener("keydown", function(ev) {
-        console.log(ev.key);
-        if (ev.shiftKey) {
-            if (!shiftDown) {
+        var key = ev.key.toLowerCase();
+        console.log(key);
+        switch (key) {
+            case "shift":
                 shiftDown = true;
-            }
-        } else if (ev.key === " " || ev.key === "n") {
-            newGame();
-        } else if (ev.key === "ArrowUp") {
-            ev.stopPropagation();
-            changeLevel(1);
-        } else if (ev.key === "ArrowDown") {
-            ev.stopPropagation();
-            changeLevel(-1);
+                break;
+            case " ":
+            case "n":
+                newGame();
+                break;
+            case "arrowup":
+                ev.stopPropagation();
+                changeLevel(1);
+                break;
+            case "arrowdown":
+                ev.stopPropagation();
+                changeLevel(-1);
         }
-
     });
 
     document.addEventListener("keyup", function(ev) {
-        if (!ev.shiftKey && shiftDown) {
+        if (shiftDown && !ev.shiftKey) {
             shiftDown = false;
             arrangeSquares();
+        }
+    });
+
+    COLOR_CONTAINER.addEventListener("click", function() {
+        if (gameOver) {
+            newGame();
         }
     });
 
@@ -493,6 +503,7 @@ function dragOnOff(ev) {
 }
 
 function onLeftClick(ev) {
+    ev.stopPropagation();
     var el = ev.currentTarget;
     if (el.classList.contains("eliminated")) {
         return;
