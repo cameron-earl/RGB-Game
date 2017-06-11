@@ -153,23 +153,27 @@ function createEventListeners() {
     });
 
     document.addEventListener("keydown", function(ev) {
+        console.log(ev.key);
         if (ev.shiftKey) {
             if (!shiftDown) {
                 shiftDown = true;
             }
+        } else if (ev.key === " " || ev.key === "n") {
+            newGame();
+        } else if (ev.key === "ArrowUp") {
+            ev.stopPropagation();
+            changeLevel(1);
+        } else if (ev.key === "ArrowDown") {
+            ev.stopPropagation();
+            changeLevel(-1);
         }
+
     });
 
     document.addEventListener("keyup", function(ev) {
         if (!ev.shiftKey && shiftDown) {
             shiftDown = false;
             arrangeSquares();
-        }
-    });
-
-    document.addEventListener("keypress", function(ev) {
-        if (ev.key === " " || ev.key === "n") {
-            newGame();
         }
     });
 
