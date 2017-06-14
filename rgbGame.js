@@ -126,6 +126,7 @@ function setHeights() {
     heightBelowHeader = (heightBelowHeader - paddingNum) + "px";
     COLOR_CONTAINER.style.height = heightBelowHeader;
     COLOR_CONTAINER.style.width = heightBelowHeader;
+    
 }
 
 function createEventListeners() {
@@ -155,7 +156,7 @@ function createEventListeners() {
 
     document.addEventListener("keydown", function(ev) {
         var key = ev.key.toLowerCase();
-        console.log(key);
+        
         switch (key) {
             case "shift":
                 shiftDown = true;
