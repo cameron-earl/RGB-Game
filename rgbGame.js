@@ -144,6 +144,7 @@ function createEventListeners() {
     document.addEventListener("mousedown", function(ev) {
         if (ev.button === 0) {
             mouseDown = true;
+            
         }
 
     });
@@ -151,6 +152,7 @@ function createEventListeners() {
     document.addEventListener("mouseup", function(ev) {
         if (ev.button === 0) {
             mouseDown = false;
+            
         }
     });
 
@@ -176,14 +178,15 @@ function createEventListeners() {
     });
 
     document.addEventListener("keyup", function(ev) {
-        if (shiftDown && !ev.shiftKey) {
+        
+        if (ev.key === "Shift") {
             shiftDown = false;
             arrangeSquares();
         }
     });
 
     COLOR_CONTAINER.addEventListener("click", function() {
-        if (gameOver) {
+        if (gameOver && !shiftDown) {
             newGame();
         }
     });
@@ -280,6 +283,7 @@ function createHints() {
 }
 
 function eliminate(el) {
+    
     el.classList.add("eliminated");
     remaining--;
     var index = squares.indexOf(el);
@@ -294,6 +298,7 @@ function eliminate(el) {
 }
 
 function win(el) {
+    
     gameOver = true;
     winCount++;
     var isTrying = lossCount * currentLevel / optionCount <= winCount;
@@ -321,6 +326,7 @@ function win(el) {
 }
 
 function lose(el) {
+    
     var i,
         l = squares.length,
         winnerFound = false;
@@ -368,6 +374,7 @@ function changeLevel(n) {
 }
 
 function arrangeSquares() {
+    
     var i,
         l,
         eliminated,
@@ -455,6 +462,7 @@ function buildSquares() {
 
 
 function newGame() {
+    
     var i, l;
     var textFieldArray;
 
@@ -498,12 +506,14 @@ function newGame() {
 }
 
 function dragOnOff(ev) {
+    
     if (shiftDown && (mouseDown || ev.type === "mousedown")) {
         onRightClick(ev);
     }
 }
 
 function onLeftClick(ev) {
+    
     ev.stopPropagation();
     var el = ev.currentTarget;
     if (el.classList.contains("eliminated")) {
@@ -519,12 +529,13 @@ function onLeftClick(ev) {
         } else {
             lose(el);
         }
-    } else {
+    } else if (!shiftDown) {
         newGame();
     }
 }
 
 function onRightClick(ev) {
+    
     var el = ev.currentTarget;
 
     ev.preventDefault();
