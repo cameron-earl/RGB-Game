@@ -65,7 +65,7 @@ var MESSAGES = [
     "Red and blue in equal amounts make magenta.",
     "If red, green and blue are equal it makes a shade of gray.",
     "If all the numbers are high, it will be very light.",
-    "To start a new game, you can also click a square.",
+    "To start a new game, you can also click the screen.",
     "You always can switch to an easier level if it gets too difficult.",
     "To turn off auto-advance, just change off the hardest level.",
     "You can eliminate squares with a right-click or a shift+left-click.",
@@ -115,12 +115,13 @@ function initialize() {
     createEventListeners();
 }
 
+//Dynamically sets height/width of square container
 function setHeights() {
     var heightBelowHeader = (window.innerHeight - HEADER.clientHeight);
     INFO.style.height = heightBelowHeader + "px";
     var ccStyle = window.getComputedStyle(COLOR_CONTAINER);
     var ccPaddingTop = ccStyle.getPropertyValue("padding-top");
-    var ccPaddingBottom = ccStyle.getPropertyValue("padding-top");
+    var ccPaddingBottom = ccStyle.getPropertyValue("padding-bottom");
     var paddingNum = +ccPaddingTop.replace(/\D+$/g, "");
     paddingNum += +ccPaddingBottom.replace(/\D+$/g, "");
     heightBelowHeader = (heightBelowHeader - paddingNum) + "px";
@@ -130,16 +131,6 @@ function setHeights() {
 }
 
 function createEventListeners() {
-
-    WHITE_BAR.addEventListener("click", function() {
-        if (!gameOver) {
-            toggleWhiteBarView();
-        }
-    });
-
-    BODY.addEventListener("contextmenu", function(ev) {
-        ev.preventDefault();
-    });
 
     document.addEventListener("mousedown", function(ev) {
         if (ev.button === 0) {
@@ -182,6 +173,18 @@ function createEventListeners() {
         if (ev.key === "Shift") {
             shiftDown = false;
             arrangeSquares();
+        }
+    });
+
+    window.addEventListener("resize", setHeights);
+
+    BODY.addEventListener("contextmenu", function(ev) {
+        ev.preventDefault();
+    });
+
+    WHITE_BAR.addEventListener("click", function() {
+        if (!gameOver) {
+            toggleWhiteBarView();
         }
     });
 
@@ -494,7 +497,6 @@ function newGame() {
             colors[i] = getRandomColor();
         }
         squares[i].style.backgroundColor = colors[i];
-        squares[i].classList.remove("hidden", "winner", "loser");
     }
     RED_DISPLAY.textContent = winningColorArr[0];
     GREEN_DISPLAY.textContent = winningColorArr[1];
