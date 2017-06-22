@@ -2,12 +2,15 @@
 
 // ************ GLOBAL VARIABLES ************
 
+// Constants/Settings
 var DEVELOPER_MODE = false,
     STANDARD_BACKGROUND_COLOR = "SteelBlue",
-    BASIC_COLORS = ["red", "green", "blue"],
     HINT_PROBABILITY = 0.5,
-    MIN_LEVEL = 2;
+    MIN_LEVEL = 2,
+    FIRST_QUILT_MODE_ROWCOUNT = 13,
+    BASIC_COLORS = ["red", "green", "blue"];
 
+// DOM Elements
 var BODY = document.querySelector("body"),
     HEADER = document.querySelector("#header"),
     H1 = document.querySelector("#header h1"),
@@ -32,6 +35,7 @@ var BODY = document.querySelector("body"),
     LOSE_ICON = document.querySelector("#lossUp"),
     STATS_SWITCH_ICON = document.querySelector("#stats .icon-exchange");
 
+// Other variables
 var currentLevel = MIN_LEVEL,
     highestLevel = MIN_LEVEL,
     newLevelUnlocked = false,
@@ -54,6 +58,7 @@ var currentLevel = MIN_LEVEL,
 
 var MESSAGES = [
     "Click the color described by the RGB code above.",
+    "RGB stands for Red, Green, Blue.",
     "Hints sometimes appear up here.",
     "Beating the hardest level will unlock a harder one.",
     "You won't be able to unlock higher levels just by guessing.",
@@ -113,6 +118,8 @@ function initialize() {
     LEVEL_DISPLAY.value = currentLevel;
 
     createEventListeners();
+
+    newGame();
 }
 
 //Dynamically sets height/width of square container
@@ -127,7 +134,7 @@ function setHeights() {
     heightBelowHeader = (heightBelowHeader - paddingNum) + "px";
     COLOR_CONTAINER.style.height = heightBelowHeader;
     COLOR_CONTAINER.style.width = heightBelowHeader;
-    
+
 }
 
 function createEventListeners() {
@@ -135,21 +142,18 @@ function createEventListeners() {
     document.addEventListener("mousedown", function(ev) {
         if (ev.button === 0) {
             mouseDown = true;
-            
         }
-
     });
 
     document.addEventListener("mouseup", function(ev) {
         if (ev.button === 0) {
             mouseDown = false;
-            
         }
     });
 
     document.addEventListener("keydown", function(ev) {
         var key = ev.key.toLowerCase();
-        
+
         switch (key) {
             case "shift":
                 shiftDown = true;
@@ -169,7 +173,7 @@ function createEventListeners() {
     });
 
     document.addEventListener("keyup", function(ev) {
-        
+
         if (ev.key === "Shift") {
             shiftDown = false;
             arrangeSquares();
@@ -277,8 +281,7 @@ function createHints() {
     var minIndex = winningColorArr.indexOf(rgbArr2[0]);
     var boldRating = winningColorArr[maxIndex] - winningColorArr[minIndex];
     var maxHint = "This color sure has a lot of " + BASIC_COLORS[maxIndex] + ".";
-    var minHint = "I'm not sure what color this is, but it's not " 
-                    + BASIC_COLORS[minIndex] + ".";
+    var minHint = "I'm not sure what color this is, but it's not " + BASIC_COLORS[minIndex] + ".";
     var boldHint =
         (boldRating >= 256 * 0.8) ? "This color is pretty bold." :
         (boldRating <= 256 * 0.2) ? "This color is pretty bland." : "";
@@ -286,7 +289,6 @@ function createHints() {
 }
 
 function eliminate(el) {
-    
     el.classList.add("eliminated");
     remaining--;
     var index = squares.indexOf(el);
@@ -301,7 +303,6 @@ function eliminate(el) {
 }
 
 function win(el) {
-    
     gameOver = true;
     winCount++;
     var isTrying = lossCount * currentLevel / optionCount <= winCount;
@@ -329,7 +330,6 @@ function win(el) {
 }
 
 function lose(el) {
-    
     var i,
         l = squares.length,
         winnerFound = false;
@@ -338,7 +338,7 @@ function lose(el) {
     el.classList.add("loser");
     flash("red");
     LOSE_ICON.classList.remove("hidden");
-    
+
     for (i = 0; i < l; i++) {
         var rgbStr = squares[i].style.backgroundColor;
         if (!winnerFound && rgbStr === winningColor) {
@@ -377,7 +377,6 @@ function changeLevel(n) {
 }
 
 function arrangeSquares() {
-    
     var i,
         l,
         eliminated,
@@ -385,7 +384,6 @@ function arrangeSquares() {
         availWidth,
         width,
         height;
-    var firstMarginlessRowcount = 13;
     if (!shiftDown || remaining === 1) {
         if (remaining <= Math.pow(rowCount - 1, 2)) {
             eliminated = COLOR_CONTAINER.querySelectorAll(".eliminated");
@@ -397,7 +395,7 @@ function arrangeSquares() {
         }
 
         rowCount = Math.ceil(Math.sqrt(squares.length));
-        if (rowCount >= firstMarginlessRowcount) {
+        if (rowCount >= FIRST_QUILT_MODE_ROWCOUNT) {
             margin = 0;
             availWidth = 100;
         } else {
@@ -465,7 +463,7 @@ function buildSquares() {
 
 
 function newGame() {
-    
+
     var i, l;
     var textFieldArray;
 
@@ -508,14 +506,14 @@ function newGame() {
 }
 
 function dragOnOff(ev) {
-    
+
     if (shiftDown && (mouseDown || ev.type === "mousedown")) {
         onRightClick(ev);
     }
 }
 
 function onLeftClick(ev) {
-    
+
     ev.stopPropagation();
     var el = ev.currentTarget;
     if (el.classList.contains("eliminated")) {
@@ -537,7 +535,7 @@ function onLeftClick(ev) {
 }
 
 function onRightClick(ev) {
-    
+
     var el = ev.currentTarget;
 
     ev.preventDefault();
@@ -577,4 +575,3 @@ function toggleInfoScreen() {
 // ************ CODE ************
 
 initialize();
-newGame();
